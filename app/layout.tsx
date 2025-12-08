@@ -1,18 +1,20 @@
+// src/app/layout.tsx
 import type { Metadata } from "next";
+// 1. Import BOTH fonts from Google
 import { Plus_Jakarta_Sans, Onest } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
+// 2. Configure Primary Font (Headings)
 const jakarta = Plus_Jakarta_Sans({
     subsets: ["latin"],
-    weight: ["400", "500", "600", "700", "800"],
-    variable: "--font-primary",
+    variable: "--font-primary", // Matches your Tailwind config
     display: "swap",
 });
 
+// 3. Configure Secondary Font (Body)
 const onest = Onest({
     subsets: ["latin"],
-    weight: ["300", "400", "500", "600"],
     variable: "--font-secondary",
     display: "swap",
 });
@@ -33,10 +35,10 @@ export default function RootLayout({
             className={`
           ${jakarta.variable} 
           ${onest.variable} 
-          antialiased 
+          font-secondary 
           bg-background 
-          text-foreground
-          font-body  
+          text-foreground 
+          antialiased
         `}
         >
         <ThemeProvider

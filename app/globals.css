@@ -1,13 +1,12 @@
 @import "tailwindcss";
 
 @theme {
-    /* This connects the class 'font-heading' to the variable --font-primary */
-    --font-heading: var(--font-primary);
+    /* 1. LINK FONTS HERE */
+    /* This tells Tailwind: "When I use font-heading, use the --font-primary variable" */
+    --font-heading: var(--font-primary), ui-sans-serif, system-ui, sans-serif;
+    --font-body: var(--font-secondary), ui-sans-serif, system-ui, sans-serif;
 
-    /* This connects the class 'font-body' to the variable --font-secondary */
-    --font-body: var(--font-secondary);
-
-    /* Colors */
+    /* 2. LINK COLORS HERE */
     --color-border: var(--border);
     --color-input: var(--input);
     --color-ring: var(--ring);
@@ -40,65 +39,51 @@
     --radius-sm: calc(var(--radius) - 4px);
 }
 
+/* 3. DEFINE VARIABLES */
 :root {
-    /* HSL Colors */
     --background: hsl(0 0% 100%);
     --foreground: hsl(224 71% 4%);
-
     --card: hsl(0 0% 100%);
     --card-foreground: hsl(224 71% 4%);
-
     --popover: hsl(0 0% 100%);
     --popover-foreground: hsl(224 71% 4%);
-
-    /* Neon Blue #1E90FF converted to HSL */
     --primary: hsl(210 100% 56%);
     --primary-foreground: hsl(210 40% 98%);
-
     --secondary: hsl(220 14% 96%);
     --secondary-foreground: hsl(220.9 39.3% 11%);
-
     --muted: hsl(220 14% 96%);
     --muted-foreground: hsl(220 8.9% 46.1%);
-
     --accent: hsl(220 14% 96%);
     --accent-foreground: hsl(220.9 39.3% 11%);
-
     --destructive: hsl(0 84.2% 60.2%);
     --destructive-foreground: hsl(210 40% 98%);
-
     --border: hsl(220 13% 91%);
     --input: hsl(220 13% 91%);
     --ring: hsl(224 71% 4%);
-
     --radius: 0.75rem;
+
+    /* DEFAULT FONT SETTINGS (Optional fallback) */
+    --font-primary: "Plus Jakarta Sans", sans-serif;
+    --font-secondary: "Onest", sans-serif;
 }
 
 .dark {
     --background: hsl(224 71% 7%);
     --foreground: hsl(210 40% 98%);
-
     --card: hsl(224 71% 10%);
     --card-foreground: hsl(210 40% 98%);
-
     --popover: hsl(224 71% 7%);
     --popover-foreground: hsl(210 40% 98%);
-
     --primary: hsl(210 100% 56%);
     --primary-foreground: hsl(210 40% 98%);
-
     --secondary: hsl(215 28% 17%);
     --secondary-foreground: hsl(210 40% 98%);
-
     --muted: hsl(215 28% 17%);
     --muted-foreground: hsl(215 20% 65%);
-
     --accent: hsl(215 28% 17%);
     --accent-foreground: hsl(210 40% 98%);
-
     --destructive: hsl(0 62.8% 30.6%);
     --destructive-foreground: hsl(210 40% 98%);
-
     --border: hsl(215 28% 17%);
     --input: hsl(215 28% 17%);
     --ring: hsl(210 100% 56%);
@@ -109,6 +94,9 @@
         @apply border-border;
     }
     body {
-        @apply bg-background text-foreground;
+        @apply bg-background text-foreground font-body;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        @apply font-heading;
     }
 }
