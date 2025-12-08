@@ -101,8 +101,8 @@ export default function Home() {
                         {/* AMBIENT GLOW ANIMATION LAYER */}
                         <motion.div
                             animate={{
-                                scale: [1, 1.2, 1],
-                                opacity: [0.3, 0.6, 0.3],
+                                scale: [1, 1.4, 1],
+                                opacity: [0.5, 0.7, 0.5],
                                 rotate: [0, 10, 0]
                             }}
                             transition={{
