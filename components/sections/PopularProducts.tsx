@@ -2,52 +2,57 @@
 
 import { motion } from "framer-motion";
 import { Star, ShoppingCart, Eye, ArrowRight } from "lucide-react";
-import Image from "next/image"; // <--- Ensure this is imported
+import Image from "next/image";
 
-// Data extracted from your TemplateMonster links
+// Data with added descriptions to match the new layout
 const products = [
     {
         id: 512195,
-        title: "InterBroad - ISP & Broadband",
-        category: "Hosting & Internet",
+        title: "InterBroad - ISP",
+        category: "Hosting", // Used for the badge text
+        description: "High-speed broadband & hosting provider template with pricing tables.",
         price: "$28",
         rating: 5.0,
+        reviews: 12,
         sales: "1.2k",
-        // Make sure these files exist in your 'public/images' folder
-        image: "/images/interbroad.jpg",
+        image: "/images/interbroad.webp",
         link: "https://www.templatemonster.com/website-templates/interbroad-isp-broadband-service-and-hosting-provider-website-html-template-512195.html",
-        badge: "Best Seller"
+        badgeColor: "bg-blue-500/90" // Custom colors for badges
     },
     {
         id: 498267,
-        title: "Bricks Land - Construction",
-        category: "Building & Manufacturing",
+        title: "Bricks Land",
+        category: "Construction",
+        description: "Industrial construction template featuring project galleries and services.",
         price: "$16",
         rating: 4.8,
+        reviews: 8,
         sales: "850",
         image: "/images/bricksland.webp",
         link: "https://www.templatemonster.com/website-templates/bricks-land-construction-and-brick-manufacturer-website-html-template-498267.html",
-        badge: "Trending"
+        badgeColor: "bg-amber-500/90"
     },
     {
         id: 459262,
         title: "CN Construction",
-        category: "Architecture & Real Estate",
+        category: "Real Estate",
+        description: "Modern architecture & building company theme with 3D elements.",
         price: "$14",
         rating: 4.9,
+        reviews: 24,
         sales: "640",
-        image: "/images/cn-construction.jpg",
+        image: "/images/cn-construction.webp",
         link: "https://www.templatemonster.com/website-templates/cn-construction-website-html-template-459262.html",
-        badge: "New"
+        badgeColor: "bg-purple-500/90"
     }
 ];
 
 export default function PopularProducts() {
     return (
-        <section className="py-24 bg-background relative overflow-hidden">
+        <section className="py-24 relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-6 relative z-10">
 
-                {/* Section Header */}
+                {/* Header */}
                 <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
                     <div>
                         <motion.h2
@@ -56,7 +61,7 @@ export default function PopularProducts() {
                             viewport={{ once: true }}
                             className="text-4xl font-extrabold font-heading text-foreground mb-4"
                         >
-                            Popular <span className="text-primary">Products</span>
+                            Fresh from the <span className="text-primary">Lab</span>
                         </motion.h2>
                         <motion.p
                             initial={{ opacity: 0, x: -20 }}
@@ -65,7 +70,7 @@ export default function PopularProducts() {
                             transition={{ delay: 0.1 }}
                             className="text-muted-foreground font-body max-w-lg text-lg"
                         >
-                            Explore our best-selling templates curated for high-performance and scalability.
+                            Explore our best-selling templates curated for high-performance.
                         </motion.p>
                     </div>
                     <motion.button
@@ -78,7 +83,7 @@ export default function PopularProducts() {
                     </motion.button>
                 </div>
 
-                {/* Products Grid */}
+                {/* Grid */}
                 <div className="grid md:grid-cols-3 gap-8">
                     {products.map((product, index) => (
                         <motion.div
@@ -87,32 +92,49 @@ export default function PopularProducts() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: index * 0.1 }}
-                            className="group bg-card border border-border rounded-2xl overflow-hidden hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300 flex flex-col"
+                            // Card Container: Matches the "Fresh from the Lab" styling with semantic colors
+                            className="group bg-card rounded-2xl border border-border overflow-hidden hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(var(--primary),0.15)] flex flex-col"
                         >
-                            {/* Image Area */}
-                            <div className="relative h-56 bg-muted overflow-hidden">
+                            {/* Thumbnail Area */}
+                            <div className="h-64 bg-muted relative overflow-hidden">
 
-                                {/* NEXT.JS IMAGE COMPONENT */}
-                                <Image
-                                    src={product.image}
-                                    alt={product.title}
-                                    fill
-                                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                />
+                                {/* Gradient Overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent z-10"></div>
 
-                                {/* Badge */}
-                                <div className="absolute top-4 left-4 bg-background/90 backdrop-blur text-foreground text-xs font-bold px-3 py-1 rounded-full shadow-sm border border-border z-10">
-                                    {product.badge}
+                                {/* Image with Zoom Effect */}
+                                <div className="w-full h-full relative group-hover:scale-105 transition-transform duration-700">
+                                    <Image
+                                        src={product.image}
+                                        alt={product.title}
+                                        fill
+                                        className="object-cover"
+                                        sizes="(max-width: 768px) 100vw, 33vw"
+                                    />
                                 </div>
 
-                                {/* Hover Overlay Actions */}
-                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 backdrop-blur-[2px] z-20">
-                                    <button className="p-3 bg-white text-black rounded-full hover:scale-110 transition-transform shadow-lg" title="Preview">
-                                        <Eye size={20} />
-                                    </button>
-                                    <button className="p-3 bg-primary text-white rounded-full hover:scale-110 transition-transform shadow-lg" title="Add to Cart">
-                                        <ShoppingCart size={20} />
+                                {/* Floating Badge (Tag Box) - Top Left */}
+                                <div className="absolute top-4 left-4 z-20">
+                                    <span className={`px-2 py-1 ${product.badgeColor} backdrop-blur text-white text-[10px] font-bold rounded uppercase tracking-wide`}>
+                                        {product.category}
+                                    </span>
+                                </div>
+
+                                {/* Hover Actions Overlay */}
+                                <div className="absolute inset-0 bg-background/80 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 backdrop-blur-sm">
+
+                                    {/* Preview Button - Slides Up */}
+                                    <a
+                                        href={product.link}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="px-4 py-2 bg-foreground text-background font-bold rounded-lg text-sm hover:bg-primary hover:text-white transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 flex items-center gap-2"
+                                    >
+                                        <Eye size={16} /> Live Preview
+                                    </a>
+
+                                    {/* Cart Button - Slides Up with Delay */}
+                                    <button className="p-2 border border-border rounded-lg text-foreground hover:bg-foreground hover:text-background transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-75">
+                                        <ShoppingCart className="w-5 h-5" />
                                     </button>
                                 </div>
                             </div>
@@ -120,34 +142,34 @@ export default function PopularProducts() {
                             {/* Content Area */}
                             <div className="p-6 flex flex-col flex-1">
                                 <div className="flex justify-between items-start mb-2">
-                                    <span className="text-xs font-bold text-primary uppercase tracking-wider">{product.category}</span>
-                                    <div className="flex items-center gap-1 text-amber-500 text-xs font-bold">
-                                        <Star size={12} fill="currentColor" />
-                                        {product.rating}
-                                    </div>
+                                    <h3 className="font-heading font-bold text-lg text-foreground group-hover:text-primary transition-colors cursor-pointer">
+                                        {product.title}
+                                    </h3>
+                                    <span className="font-bold text-foreground text-lg">{product.price}</span>
                                 </div>
 
-                                <h3 className="font-heading font-bold text-xl text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-1">
-                                    {product.title}
-                                </h3>
+                                <p className="text-sm text-muted-foreground mb-4 font-body line-clamp-2">
+                                    {product.description}
+                                </p>
 
-                                <div className="mt-auto pt-4 flex items-center justify-between border-t border-border">
-                                    <div className="flex flex-col">
-                                        <span className="text-xs text-muted-foreground">Price</span>
-                                        <span className="font-heading font-bold text-xl text-foreground">{product.price}</span>
+                                {/* Footer Stats */}
+                                <div className="flex items-center justify-between pt-4 border-t border-border mt-auto">
+                                    <div className="flex items-center gap-1 text-xs text-yellow-500 font-bold">
+                                        ★★★★★ <span className="text-muted-foreground ml-1 font-medium">({product.reviews} Reviews)</span>
                                     </div>
-                                    <a
-                                        href={product.link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="px-4 py-2 bg-muted text-foreground font-bold text-sm rounded-lg hover:bg-primary hover:text-white transition-colors"
-                                    >
-                                        Buy Now
-                                    </a>
+                                    <div className="text-xs text-muted-foreground font-bold">
+                                        {product.sales} Sales
+                                    </div>
                                 </div>
                             </div>
                         </motion.div>
                     ))}
+                </div>
+
+                <div className="mt-16 text-center">
+                    <button className="px-8 py-4 border border-border rounded-full text-foreground font-bold hover:bg-foreground hover:text-background transition-all font-heading text-sm">
+                        View All Products
+                    </button>
                 </div>
             </div>
         </section>

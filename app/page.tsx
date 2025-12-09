@@ -5,6 +5,9 @@ import Navbar from "@/components/layout/Navbar";
 import { motion } from "framer-motion";
 import { Search, ShieldCheck, Zap, TrendingUp } from "lucide-react";
 import PopularProducts from "@/components/sections/PopularProducts";
+import BrowseCategories from "@/components/sections/BrowseCategories";
+import ServiceSection from "@/components/sections/ServiceSection";
+import Advantages from "@/components/sections/Advantages";
 
 export default function Home() {
     return (
@@ -16,7 +19,7 @@ export default function Home() {
             <Navbar />
 
             {/* 2. HERO SECTION */}
-            <section className="relative pt-40 pb-16 lg:pt-52 lg:pb-40 overflow-visible">
+            <section className="relative pt-30 pb-16 lg:pt-52 lg:pb-40 overflow-visible">
 
                 {/* GLOBAL BACKGROUND BLOBS */}
                 <div className="fixed inset-0 z-0 pointer-events-none">
@@ -231,6 +234,15 @@ export default function Home() {
 
             {/* POPULAR PRODUCTS SECTION */}
             <PopularProducts />
+
+            {/* CATEGORIES SECTION */}
+            <BrowseCategories />
+
+            {/*SERVICE SECTION*/}
+            <ServiceSection />
+
+            {/*ADVANTAGES SECTION*/}
+            <Advantages />
 
             <div className="h-[200px]"></div>
         </main>
