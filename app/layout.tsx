@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Onest } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import FloatingControls from "@/components/layout/FloatingControls";
 
 // 2. Configure Primary Font (Headings)
 const jakarta = Plus_Jakarta_Sans({
@@ -48,6 +49,8 @@ export default function RootLayout({
             disableTransitionOnChange
         >
             {children}
+
+            <FloatingControls />
         </ThemeProvider>
         </body>
         </html>

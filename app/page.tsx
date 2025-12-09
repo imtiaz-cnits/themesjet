@@ -4,6 +4,7 @@ import TopBar from "@/components/layout/Topbar";
 import Navbar from "@/components/layout/Navbar";
 import { motion } from "framer-motion";
 import { Search, ShieldCheck, Zap, TrendingUp } from "lucide-react";
+import PopularProducts from "@/components/sections/PopularProducts";
 
 export default function Home() {
     return (
@@ -15,7 +16,7 @@ export default function Home() {
             <Navbar />
 
             {/* 2. HERO SECTION */}
-            <section className="relative pt-48 pb-32 lg:pt-52 lg:pb-64 overflow-visible">
+            <section className="relative pt-40 pb-16 lg:pt-52 lg:pb-40 overflow-visible">
 
                 {/* GLOBAL BACKGROUND BLOBS */}
                 <div className="fixed inset-0 z-0 pointer-events-none">
@@ -227,6 +228,9 @@ export default function Home() {
                     </div>
                 </div>
             </div>
+
+            {/* POPULAR PRODUCTS SECTION */}
+            <PopularProducts />
 
             <div className="h-[200px]"></div>
         </main>

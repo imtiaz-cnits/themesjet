@@ -7,7 +7,10 @@ import { useTheme } from "next-themes";
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
-    const { theme, setTheme } = useTheme();
+
+    // We keep 'theme' to adjust colors based on Light/Dark mode,
+    // but we removed 'setTheme' since the switcher is no longer here.
+    const { theme } = useTheme();
     const [mounted, setMounted] = useState(false);
 
     // Prevent hydration mismatch
@@ -72,7 +75,7 @@ export default function Navbar() {
                         {/* Icon Body (Gradient) - Always stays same */}
                         <path d="M114.914 21.6459C130.748 34.5607 140.86 54.2248 140.86 76.2513C140.86 115.149 109.328 146.681 70.4307 146.681C61.9239 146.681 53.7692 145.173 46.2197 142.41C69.4131 99.0757 86.4792 69.0021 114.914 21.6459ZM70.4307 5.82068C87.2729 5.82075 102.734 11.7334 114.853 21.5951L101.366 29.0101L83.6289 60.4359L94.8574 33.2855C86.5495 38.7738 82.9013 42.8249 77.6992 51.307C59.1366 84.1946 51.1677 102.26 37.376 107.809L24.8711 129.962C24.5145 129.659 24.161 129.353 23.8105 129.043L31.5332 110.052C23.082 113.209 18.2339 114.294 10.54 113.329C3.85869 102.56 6.05804e-05 89.8566 0 76.2513C0 37.3537 31.5331 5.82068 70.4307 5.82068Z" fill="url(#paint0_linear_622_61)"/>
 
-                        {/* Icon White Details - Keep White or transparent? Kept White for now, or match logoTextFill if you want full dark mode logo */}
+                        {/* Icon White Details */}
                         <path fillRule="evenodd" clipRule="evenodd" d="M119.31 102.541C120.868 106.332 119.278 110.694 115.656 112.566L78.9458 131.547L73.3407 120.527L106.385 103.442L96.4441 79.2439L107.792 74.5047L119.31 102.541Z" fill="white"/>
                         <path fillRule="evenodd" clipRule="evenodd" d="M18.0583 61.0105C16.5007 57.2966 18.0904 53.0238 21.712 51.1895L58.4225 32.5957L64.0276 43.3908L30.9833 60.1276L40.9242 83.8318L29.5758 88.4743L18.0583 61.0105Z" fill="white"/>
                         <path d="M73.69 80.9637L83.0046 72.1762L84.7493 91.3845L80.0927 102.444L73.69 80.9637Z" fill="white"/>
@@ -105,12 +108,6 @@ export default function Navbar() {
 
                 {/* Right Actions */}
                 <div className="flex items-center gap-6">
-                    <button
-                        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                        className={`${iconClass} transition-colors`}
-                    >
-                        {theme === "dark" ? "☀️" : "🌙"}
-                    </button>
 
                     <button className={`hidden md:flex ${iconClass} transition-colors`}>
                         <Search size={22} />
