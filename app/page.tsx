@@ -8,6 +8,7 @@ import PopularProducts from "@/components/sections/PopularProducts";
 import BrowseCategories from "@/components/sections/BrowseCategories";
 import ServiceSection from "@/components/sections/ServiceSection";
 import Advantages from "@/components/sections/Advantages";
+import WordPressEcosystem from "@/components/sections/WordPressEcosystem";
 
 export default function Home() {
     return (
@@ -243,6 +244,9 @@ export default function Home() {
 
             {/*ADVANTAGES SECTION*/}
             <Advantages />
+
+            {/*ECOSYSTEM SECTION - COMING SOON*/}
+            <WordPressEcosystem />
 
             <div className="h-[200px]"></div>
         </main>
