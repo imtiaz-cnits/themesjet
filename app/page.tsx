@@ -9,6 +9,7 @@ import BrowseCategories from "@/components/sections/BrowseCategories";
 import ServiceSection from "@/components/sections/ServiceSection";
 import Advantages from "@/components/sections/Advantages";
 import WordPressEcosystem from "@/components/sections/WordPressEcosystem";
+import FreshFromLab from "@/components/sections/FreshFromLab";
 
 export default function Home() {
     return (
@@ -247,6 +248,9 @@ export default function Home() {
 
             {/*ECOSYSTEM SECTION - COMING SOON*/}
             <WordPressEcosystem />
+
+            {/* FRESH FROM LAB SECTION */}
+            <FreshFromLab />
 
             <div className="h-[200px]"></div>
         </main>
