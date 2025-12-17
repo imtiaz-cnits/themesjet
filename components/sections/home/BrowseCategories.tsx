@@ -50,7 +50,7 @@ const categories = [
 
 export default function BrowseCategories() {
     return (
-        <section className="relative z-10 py-24">
+        <section className="relative z-10 py-16">
             <div className="max-w-7xl mx-auto px-6">
 
                 {/* Header */}

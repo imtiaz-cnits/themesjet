@@ -1,19 +1,35 @@
 "use client";
 
+import { useState, useEffect } from "react"; // Added imports
 import TopBar from "@/components/layout/Topbar";
 import Navbar from "@/components/layout/Navbar";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion"; // Added AnimatePresence
 import { Search, ShieldCheck, Zap, TrendingUp } from "lucide-react";
-import PopularProducts from "@/components/sections/PopularProducts";
-import BrowseCategories from "@/components/sections/BrowseCategories";
-import ServiceSection from "@/components/sections/ServiceSection";
-import Advantages from "@/components/sections/Advantages";
-import WordPressEcosystem from "@/components/sections/WordPressEcosystem";
-import FreshFromLab from "@/components/sections/FreshFromLab";
+import PopularProducts from "@/components/sections/home/PopularProducts";
+import BrowseCategories from "@/components/sections/home/BrowseCategories";
+import ServiceSection from "@/components/sections/home/ServiceSection";
+import Advantages from "@/components/sections/home/Advantages";
+import WordPressEcosystem from "@/components/sections/home/WordPressEcosystem";
+import FreshFromLab from "@/components/sections/home/FreshFromLab";
+import Testimonials from "@/components/sections/home/Testimonials";
+import ThemeStoreCTA from "@/components/sections/home/ThemeStoreCTA";
+import Footer from "@/components/layout/Footer";
+
+// Rotating words list
+const words = ["Choose Better.", "Scale Faster.", "Hassle Free."];
 
 export default function Home() {
+    // State for text rotation
+    const [index, setIndex] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setIndex((prevIndex) => (prevIndex + 1) % words.length);
+        }, 3000); // Change word every 3 seconds
+        return () => clearInterval(interval);
+    }, []);
+
     return (
-        // FIX 1: Use 'bg-background' and 'text-foreground' instead of hardcoded colors
         <main className="min-h-screen bg-background text-foreground font-body selection:bg-primary/30 overflow-x-hidden transition-colors duration-300">
 
             {/* 1. Global Navigation */}
@@ -44,24 +60,38 @@ export default function Home() {
                         </motion.div>
 
                         {/* Headline */}
-                        <motion.h1
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 }}
-                            className="font-heading font-extrabold text-5xl md:text-7xl leading-[1.1] mb-6 text-foreground"
-                        >
-                            Build Faster.<br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 text-glow">
-                                Ship Better.
-                            </span>
-                        </motion.h1>
+                        <div className="font-heading font-extrabold text-5xl md:text-7xl leading-[1.1] mb-6 text-foreground">
+                            <motion.span
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.1 }}
+                            >
+                                Build Faster.<br />
+                            </motion.span>
+
+                            {/* --- SMOOTH TEXT SPINNING ANIMATION START --- */}
+                            <div className="h-[1.1em] overflow-hidden flex items-center">
+                                <AnimatePresence mode="wait">
+                                    <motion.span
+                                        key={index}
+                                        initial={{ y: 40, opacity: 0, rotateX: -90 }}
+                                        animate={{ y: 0, opacity: 1, rotateX: 0 }}
+                                        exit={{ y: -40, opacity: 0, rotateX: 90 }}
+                                        transition={{ duration: 0.5, ease: "easeInOut" }}
+                                        className="block text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 text-glow"
+                                    >
+                                        {words[index]}
+                                    </motion.span>
+                                </AnimatePresence>
+                            </div>
+                            {/* --- SMOOTH TEXT SPINNING ANIMATION END --- */}
+                        </div>
 
                         {/* Subtext */}
                         <motion.p
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
-                            // FIX 2: Use 'text-muted-foreground' for gray text
                             className="text-lg text-muted-foreground mb-10 max-w-lg leading-relaxed font-body"
                         >
                             The premium marketplace for elite developers. Discover high-performance <span className="text-foreground font-semibold">HTML, React, & PHP</span> assets curated for scale.
@@ -72,8 +102,7 @@ export default function Home() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 }}
-                            // FIX 3: Use 'bg-card' or 'bg-muted' for containers
-                            className="bg-card/80 border border-border p-1.5 rounded-2xl flex flex-col sm:flex-row gap-2 max-w-lg shadow-2xl dark:shadow-black/50 backdrop-blur-sm relative z-20"
+                            className="bg-card/80 border border-border p-1.5 rounded-2xl flex flex-col sm:flex-row gap-2 max-w-lg dark:shadow-black/50 backdrop-blur-sm relative z-20"
                         >
                             <div className="flex-1 flex items-center px-4 h-12">
                                 <Search className="w-5 h-5 text-muted-foreground mr-3" />
@@ -116,7 +145,6 @@ export default function Home() {
                                 repeat: Infinity,
                                 ease: "easeInOut"
                             }}
-                            // FIX 4: Adjusted gradient to work in Light mode too
                             className="absolute top-10 right-10 w-[450px] h-[550px] bg-gradient-to-tr from-primary/40 via-purple-600/40 to-blue-400/40 rounded-full blur-[100px] -z-10"
                         />
 
@@ -128,7 +156,6 @@ export default function Home() {
                                 opacity: { duration: 0.8 },
                                 y: { duration: 6, repeat: Infinity, ease: "easeInOut" }
                             }}
-                            // FIX 5: Use 'bg-card' or 'bg-background' with border variables
                             className="absolute top-10 right-10 w-[420px] h-[520px] bg-card/80 backdrop-blur-xl border border-border rounded-2xl shadow-2xl p-6 rotate-3 z-10 ring-1 ring-border"
                         >
                             {/* Mock UI Header */}
@@ -161,7 +188,6 @@ export default function Home() {
                                 opacity: { delay: 0.3 },
                                 y: { duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }
                             }}
-                            // FIX 6: Ensure front card is also theme-aware
                             className="absolute bottom-20 left-0 w-[280px] bg-card/95 backdrop-blur-md border border-border rounded-2xl p-5 shadow-2xl z-20 -rotate-2 ring-1 ring-border"
                         >
                             <div className="flex items-center gap-4 mb-4">
@@ -207,7 +233,7 @@ export default function Home() {
             </section>
 
             {/* STATS STRIP */}
-            <div className="border-y border-border bg-card/30 backdrop-blur-md relative z-10">
+            <div className="border-y mb-10 border-border bg-card/30 backdrop-blur-md relative z-10">
                 <div className="max-w-7xl mx-auto px-6 py-10 flex flex-wrap justify-center md:justify-between items-center gap-8">
                     <div className="text-center md:text-left">
                         <h3 className="text-3xl font-bold text-foreground font-heading">500+</h3>
@@ -252,7 +278,13 @@ export default function Home() {
             {/* FRESH FROM LAB SECTION */}
             <FreshFromLab />
 
-            <div className="h-[200px]"></div>
+            {/* TESTIMONIALS SECTION */}
+            <Testimonials />
+
+            {/*THEME STORE CTA*/}
+            <ThemeStoreCTA />
+
+            <Footer />
         </main>
     );
 }

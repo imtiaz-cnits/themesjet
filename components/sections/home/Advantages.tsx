@@ -9,7 +9,7 @@ export default function Advantages() {
         // SECTION CONTAINER
         // Light: 'bg-background' matches global theme (seamless transition)
         // Dark: Deep radial gradient
-        <section className="py-24 relative z-10 overflow-hidden transition-colors duration-300">
+        <section className="py-16 relative z-10 overflow-hidden transition-colors duration-300">
 
             <div className="max-w-7xl mx-auto px-6">
 

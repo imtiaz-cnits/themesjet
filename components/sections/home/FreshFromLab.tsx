@@ -3,8 +3,9 @@
 import { motion } from "framer-motion";
 import { Star, ShoppingCart, Eye, ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
-// Data with added descriptions to match the new layout
+// Updated Data with descriptions to match the new layout structure
 const products = [
     {
         id: 512195,
@@ -47,43 +48,28 @@ const products = [
     }
 ];
 
-export default function PopularProducts() {
+export default function FreshFromLab() {
     return (
-        <section className="py-24 relative overflow-hidden">
-            <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <section className="py-16 relative transition-colors duration-300">
+            <div className="max-w-7xl mx-auto px-6">
 
                 {/* Header */}
-                <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-                    <div>
-                        <motion.h2
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            className="text-4xl font-extrabold font-heading text-foreground mb-4"
-                        >
-                            Fresh from the <span className="text-primary">Lab</span>
-                        </motion.h2>
-                        <motion.p
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: 0.1 }}
-                            className="text-muted-foreground font-body max-w-lg text-lg"
-                        >
-                            Explore our best-selling templates curated for high-performance.
-                        </motion.p>
-                    </div>
-                    <motion.button
-                        initial={{ opacity: 0, x: 20 }}
+                <div className="flex justify-between items-end mb-12">
+                    <motion.h2
+                        initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        className="group flex items-center gap-2 text-primary font-bold font-heading hover:text-primary/80 transition-colors"
+                        className="text-3xl md:text-4xl font-heading font-bold text-foreground"
                     >
-                        View Marketplace <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </motion.button>
+                        Fresh from the Lab
+                    </motion.h2>
+
+                    <Link href="/products" className="hidden md:flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-primary transition-colors">
+                        View All <ArrowRight size={16} />
+                    </Link>
                 </div>
 
-                {/* Grid */}
+                {/* Grid (Applied from your snippet) */}
                 <div className="grid md:grid-cols-3 gap-8">
                     {products.map((product, index) => (
                         <motion.div
@@ -92,7 +78,7 @@ export default function PopularProducts() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: index * 0.1 }}
-                            // Card Container: Matches the "Fresh from the Lab" styling with semantic colors
+                            // Cards
                             className="group bg-card rounded-2xl border border-border overflow-hidden hover:border-primary/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(var(--primary),0.15)] flex flex-col"
                         >
                             {/* Thumbnail Area */}
@@ -166,11 +152,16 @@ export default function PopularProducts() {
                     ))}
                 </div>
 
-                <div className="mt-16 text-center">
-                    <button className="px-8 py-4 border border-border rounded-full text-foreground font-bold hover:bg-foreground hover:text-background transition-all font-heading text-sm">
+                {/* Mobile View All Button */}
+                <div className="mt-16 text-center md:hidden">
+                    <Link
+                        href="/products"
+                        className="inline-block px-8 py-4 border border-border rounded-full text-foreground font-bold hover:bg-foreground hover:text-background transition-all font-heading text-sm"
+                    >
                         View All Products
-                    </button>
+                    </Link>
                 </div>
+
             </div>
         </section>
     );
