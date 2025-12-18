@@ -23,6 +23,12 @@ const onest = Onest({
 export const metadata: Metadata = {
     title: "Themes Jet",
     description: "Premium Templates & Development Agency",
+
+    icons: {
+        icon: "/favicon.svg",
+        // shortcut: "/favicon-16x16.png",
+        // apple: "/apple-touch-icon.png",
+    },
 };
 
 export default function RootLayout({
