@@ -112,7 +112,7 @@ export default function ProductsPage() {
                     <div className="max-w-7xl mx-auto px-6">
                         {/* Breadcrumb */}
                         <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground mb-6">
-                            <Link href="/" className="hover:text-primary transition-colors">Home</Link>
+                            <Link href="/public" className="hover:text-primary transition-colors">Home</Link>
                             <span>/</span>
                             <Link href="/products" className="hover:text-primary transition-colors">Templates</Link>
                             <span>/</span>

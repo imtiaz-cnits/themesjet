@@ -107,7 +107,7 @@ export default function Navbar() {
                         <Link href="/" className={`${homeLinkClass} transition-colors`}>Home</Link>
                         <Link href="/products" className={`${navLinkClass} transition-colors`}>Products</Link>
                         <Link href="/services" className={`${navLinkClass} transition-colors`}>Services</Link>
-                        <Link href="/about" className={`${navLinkClass} transition-colors`}>Community</Link>
+                        <Link href="/about" className={`${navLinkClass} transition-colors`}>About</Link>
                     </div>
 
                     {/* Right Actions */}

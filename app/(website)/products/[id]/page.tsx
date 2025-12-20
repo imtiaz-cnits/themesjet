@@ -44,7 +44,7 @@ export default function ProductDetailsPage() {
             {/* --- BREADCRUMB --- */}
             <div className="border-b border-border bg-card/30 pt-32 pb-4">
                 <div className="max-w-7xl mx-auto px-6 text-xs font-medium text-muted-foreground flex gap-2">
-                    <Link href="/" className="hover:text-foreground transition-colors">Home</Link> /
+                    <Link href="/public" className="hover:text-foreground transition-colors">Home</Link> /
                     <Link href="/products" className="hover:text-foreground transition-colors">Templates</Link> /
                     <span className="text-foreground">{product.category}</span>
                 </div>
@@ -222,7 +222,7 @@ export default function ProductDetailsPage() {
 
                             {/* Tags */}
                             <div className="flex flex-wrap gap-2">
-                                {["admin dashboard", "react template", "dark mode", "analytics"].map((tag) => (
+                                {["admin", "react template", "dark mode", "analytics"].map((tag) => (
                                     <Link key={tag} href="#" className="px-3 py-1.5 bg-secondary border border-border rounded-lg text-xs text-muted-foreground hover:text-primary hover:border-primary transition-colors">
                                         {tag}
                                     </Link>
