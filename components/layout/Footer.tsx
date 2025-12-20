@@ -37,7 +37,8 @@ const blobVariantsDelayed: Variants = {
 
 export default function Footer() {
     return (
-        <footer className="relative border-t border-border pt-20 pb-10 text-sm transition-colors duration-300 overflow-hidden bg-secondary dark:bg-card">
+        // FIX: Changed 'dark:bg-card' to 'dark:bg-background' to match the HTML design
+        <footer className="relative border-t border-border pt-20 pb-10 text-sm transition-colors duration-300 overflow-hidden bg-secondary dark:bg-background">
 
             {/* --- ANIMATED BACKGROUND (Dark Mode Only) --- */}
             <div className="absolute inset-0 z-0 hidden dark:block pointer-events-none">
