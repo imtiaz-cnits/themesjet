@@ -37,8 +37,7 @@ const blobVariantsDelayed: Variants = {
 
 export default function Footer() {
     return (
-        // FIX: Changed 'dark:bg-card' to 'dark:bg-background' to match the HTML design
-        <footer className="relative border-t border-border pt-20 pb-10 text-sm transition-colors duration-300 overflow-hidden bg-secondary dark:bg-background">
+        <footer className="relative border-t border-border pt-20 pb-10 text-sm transition-colors duration-300 overflow-hidden bg-background dark:bg-background">
 
             {/* --- ANIMATED BACKGROUND (Dark Mode Only) --- */}
             <div className="absolute inset-0 z-0 hidden dark:block pointer-events-none">
@@ -46,13 +45,13 @@ export default function Footer() {
                     variants={blobVariants}
                     initial="initial"
                     animate="animate"
-                    className="absolute top-[-20%] left-[-10%] w-[50%] h-[500px] bg-purple-900/30 blur-[120px]"
+                    className="absolute top-[-20%] left-[-10%] w-[50%] h-[500px] bg-purple-500/40 blur-[120px]"
                 />
                 <motion.div
                     variants={blobVariantsDelayed}
                     initial="initial"
                     animate="animate"
-                    className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[500px] bg-primary/20 blur-[120px]"
+                    className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[500px] bg-primary/25 blur-[120px]"
                 />
             </div>
 
@@ -62,16 +61,14 @@ export default function Footer() {
                     {/* Brand Column */}
                     <div className="col-span-1 md:col-span-1">
                         <Link href="/" className="flex items-center gap-3 group z-50 mb-6">
-                            {/* --- FOOTER LOGO START --- */}
+                            {/* --- FOOTER LOGO --- */}
                             <svg className="h-10 w-auto" viewBox="0 0 3006 542" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                {/* Icon Body */}
                                 <circle cx="251" cy="271.5" r="250.5" fill="white"/>
                                 <path d="M409.282 77.0894C465.678 123.087 501.691 193.126 501.691 271.577C501.691 410.115 389.384 522.422 250.846 522.422C220.546 522.422 191.5 517.049 164.61 507.206C247.217 352.865 308.006 245.757 409.282 77.0894ZM250.846 20.731C310.833 20.731 365.901 41.7885 409.064 76.9136L361.028 103.322L297.854 215.249L337.845 118.552C308.255 138.099 295.262 152.525 276.734 182.735C210.621 299.868 182.24 364.209 133.119 383.973L88.582 462.877C87.3117 461.799 86.0521 460.708 84.8037 459.605L112.308 391.961C82.2086 403.206 64.942 407.079 37.541 403.643C13.7421 365.286 3.17389e-05 320.036 0 271.577C0 133.038 112.308 20.731 250.846 20.731Z" fill="url(#footer_logo_gradient)"/>
                                 <path fillRule="evenodd" clipRule="evenodd" d="M424.936 365.21C430.483 378.713 424.822 394.248 411.923 400.917L281.174 468.521L261.211 429.272L378.902 368.42L343.497 282.236L383.915 265.356L424.936 365.21Z" fill="white"/>
                                 <path fillRule="evenodd" clipRule="evenodd" d="M64.3169 217.296C58.7696 204.068 64.4312 188.85 77.3301 182.317L208.079 116.093L228.042 154.541L110.351 214.151L145.756 298.576L105.338 315.111L64.3169 217.296Z" fill="white"/>
                                 <path d="M262.456 288.361L295.631 257.064L301.845 325.476L285.26 364.865L262.456 288.361Z" fill="white"/>
-
-                                {/* Text Paths (Dynamic Color) */}
+                                {/* Text Paths with fill-foreground for theme adaptability */}
                                 <g className="fill-foreground">
                                     <path d="M2218.55 445.637C2167.8 445.637 2134.13 425.237 2117.55 384.439L2175.26 355.581C2181.9 376.81 2198.15 387.424 2224.02 387.424C2245.58 387.424 2257.69 380.956 2260.34 368.02C2261.34 361.054 2257.69 355.415 2249.4 351.103C2241.11 346.791 2230.82 342.811 2218.55 339.162C2206.28 335.514 2194.17 331.201 2182.23 326.226C2170.29 320.919 2160.84 312.295 2153.87 300.354C2146.9 288.413 2144.91 273.652 2147.9 256.072C2152.21 232.853 2163.99 214.942 2183.22 202.337C2202.79 189.401 2224.69 182.933 2248.9 182.933C2270.46 182.933 2289.37 187.577 2305.62 196.864C2321.87 206.152 2333.82 219.088 2341.44 235.673L2283.73 264.53C2277.76 247.946 2264.99 239.653 2245.42 239.653C2226.18 239.653 2215.07 246.785 2212.08 261.048C2210.76 268.677 2214.07 274.647 2222.03 278.959C2230.33 283.271 2240.61 287.086 2252.88 290.403C2265.49 293.72 2277.76 297.866 2289.7 302.841C2301.97 307.485 2311.59 315.778 2318.56 327.719C2325.52 339.328 2327.35 354.42 2324.03 372.995C2319.72 397.209 2307.94 415.452 2288.7 427.725C2269.8 439.666 2246.41 445.637 2218.55 445.637Z"/>
                                     <path d="M1901.92 219.254C1930.11 195.04 1962.62 182.933 1999.44 182.933C2036.26 182.933 2065.28 195.703 2086.51 221.244C2107.74 246.453 2114.87 277.467 2107.9 314.285C2107.24 321.582 2104.92 330.372 2100.94 340.655H1912.87C1914.19 356.576 1920.33 368.351 1931.28 375.981C1942.22 383.61 1955.99 387.424 1972.57 387.424C1997.45 387.424 2017.85 378.966 2033.77 362.049L2079.05 398.37C2051.18 429.881 2014.03 445.637 1967.6 445.637C1926.47 445.637 1895.12 432.535 1873.56 406.331C1852.33 380.127 1844.87 347.786 1851.17 309.309C1856.81 273.155 1873.73 243.136 1901.92 219.254ZM1921.82 290.403H2048.2C2047.87 273.486 2042.73 261.048 2032.77 253.087C2023.16 244.795 2010.72 240.648 1995.46 240.648C1978.87 240.648 1964.11 244.96 1951.18 253.584C1938.57 262.209 1928.79 274.481 1921.82 290.403Z"/>
