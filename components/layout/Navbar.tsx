@@ -2,35 +2,53 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation"; // Added usePathname
-import { Search, ShoppingBag, Menu, X, ChevronRight } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Search, ShoppingBag, Menu, X, ChevronRight, User, LogOut, LayoutDashboard } from "lucide-react";
 import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSession, signOut } from "next-auth/react"; // 1. Import Auth Hooks
+
+// Import the new Search Modal
+import SearchModal from "@/components/ui/SearchModal";
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const { theme } = useTheme();
     const [mounted, setMounted] = useState(false);
-    const pathname = usePathname(); // Get current route
+    const pathname = usePathname();
 
-    // State for Mobile Menu
+    // 2. Get Session Data
+    const { data: session, status } = useSession();
+    const isLoading = status === "loading";
+
+    // State for Mobile Menu & Search Modal
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+    // Navigation Links Data
+    const navLinks = [
+        { name: "Home", href: "/" },
+        { name: "Products", href: "/products" },
+        { name: "Services", href: "/services" },
+        { name: "Insights", href: "/insights" },
+        { name: "About", href: "/about" },
+    ];
 
     useEffect(() => setMounted(true), []);
 
     useEffect(() => {
-        const handleScroll = () => setIsScrolled(window.scrollY > 20);
+        const handleScroll = () => setIsScrolled(window.scrollY > 40);
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
     useEffect(() => {
-        if (isMobileMenuOpen) {
+        if (isMobileMenuOpen || isSearchOpen) {
             document.body.style.overflow = "hidden";
         } else {
             document.body.style.overflow = "unset";
         }
-    }, [isMobileMenuOpen]);
+    }, [isMobileMenuOpen, isSearchOpen]);
 
     // LOGIC: Determine if we need "Light Mode" colors
     const isLightTransparent = mounted && theme === 'light' && !isScrolled && !isMobileMenuOpen;
@@ -41,28 +59,23 @@ export default function Navbar() {
     const buttonClass = isLightTransparent ? "bg-[#0B0F19] text-white hover:bg-primary" : "bg-white text-[#0B0F19] hover:bg-primary hover:text-white";
 
     const navbarBgClass = isScrolled
-        ? "bg-[#0B0F19]/80 backdrop-blur-xl border-white/10 py-4 top-0"
-        : "bg-transparent border-transparent py-6 top-[0px] lg:top-[40px]";
-
-    // Navigation Links Config
-    const navLinks = [
-        { name: "Home", href: "/" },
-        { name: "Products", href: "/products" },
-        { name: "Services", href: "/services" },
-        { name: "About", href: "/about" },
-    ];
+        ? "fixed bg-background/80 backdrop-blur-xl border-border py-4 top-0"
+        : "absolute bg-transparent border-transparent py-6 top-0 lg:top-[40px]";
 
     if (!mounted) return null;
 
     return (
         <>
-            <nav className={`fixed w-full z-40 transition-all duration-300 border-b ${navbarBgClass}`}>
+            {/* --- SEARCH MODAL COMPONENT --- */}
+            <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+
+            <nav className={`w-full z-40 transition-all duration-300 border-b ${navbarBgClass}`}>
                 <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
 
-                    {/* Logo */}
+                    {/* --- LOGO --- */}
                     <Link href="/" className="flex items-center gap-3 group z-50 max-w-[200px]">
                         <svg className="h-10 w-auto" viewBox="0 0 3006 542" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="251" cy="271.5" r="250.5" fill="white"/>
+                            <circle cx="251" cy="271.5" r="250.5" fill="white" className="dark:fill-white fill-background" />
                             <path d="M409.282 77.0894C465.678 123.087 501.691 193.126 501.691 271.577C501.691 410.115 389.384 522.422 250.846 522.422C220.546 522.422 191.5 517.049 164.61 507.206C247.217 352.865 308.006 245.757 409.282 77.0894ZM250.846 20.731C310.833 20.731 365.901 41.7885 409.064 76.9136L361.028 103.322L297.854 215.249L337.845 118.552C308.255 138.099 295.262 152.525 276.734 182.735C210.621 299.868 182.24 364.209 133.119 383.973L88.582 462.877C87.3117 461.799 86.0521 460.708 84.8037 459.605L112.308 391.961C82.2086 403.206 64.942 407.079 37.541 403.643C13.7421 365.286 3.17389e-05 320.036 0 271.577C0 133.038 112.308 20.731 250.846 20.731Z" fill="url(#navbar_logo_gradient)"/>
                             <path fillRule="evenodd" clipRule="evenodd" d="M424.936 365.21C430.483 378.713 424.822 394.248 411.923 400.917L281.174 468.521L261.211 429.272L378.902 368.42L343.497 282.236L383.915 265.356L424.936 365.21Z" fill="white"/>
                             <path fillRule="evenodd" clipRule="evenodd" d="M64.3169 217.296C58.7696 204.068 64.4312 188.85 77.3301 182.317L208.079 116.093L228.042 154.541L110.351 214.151L145.756 298.576L105.338 315.111L64.3169 217.296Z" fill="white"/>
@@ -75,7 +88,7 @@ export default function Navbar() {
                                 <path d="M1024.3 182.933C1052.16 182.933 1073.72 192.221 1088.98 210.796C1104.24 229.371 1109.05 254.414 1103.41 285.925L1076.54 438.671H1012.36L1037.73 293.886C1040.72 276.969 1038.4 264.199 1030.77 255.575C1023.47 246.95 1012.36 242.638 997.431 242.638C982.173 242.638 968.739 247.116 957.13 256.072C945.852 265.028 937.891 278.627 933.248 296.871L908.37 438.671H844.187L905.385 90.3896H969.568L947.179 217.264C966.417 194.377 992.124 182.933 1024.3 182.933Z"/>
                                 <path d="M870.04 90.3906L858.596 156.067H764.56L714.806 438.672H646.145L695.899 156.067H602.361L613.804 90.3906H870.04Z"/>
                                 <path d="M2496.71 88.7301C2505.66 80.7694 2515.61 76.7891 2526.56 76.7891C2537.51 76.7891 2546.13 80.7694 2552.43 88.7301C2559.07 96.6909 2561.55 105.978 2559.9 116.593C2558.24 127.539 2552.93 136.826 2543.97 144.455C2535.02 152.084 2524.9 155.899 2513.62 155.899C2502.68 155.899 2494.05 152.084 2487.75 144.455C2481.45 136.494 2479.13 127.207 2480.79 116.593C2482.44 105.647 2487.75 96.3592 2496.71 88.7301ZM2431.03 439.499L2475.81 185.751H2539.99L2495.21 439.499C2488.58 478.308 2475.15 505.507 2454.91 521.097C2435.01 536.686 2406.49 543.32 2369.34 540.999L2380.28 479.303C2409.47 481.293 2426.39 468.025 2431.03 439.499Z"/>
-                                <path d="M2963.11 2.33496C2964.87 -1.27508 2970.22 -0.532666 2970.92 3.41895L2985.93 87.4043L2974.67 151.234L3006 204.409H2965.28L2941.15 341.152C2934.52 379.96 2921.09 407.159 2900.85 422.749C2885.36 434.884 2862.23 440.285 2838.08 441.106V441.491H2681.13C2640 441.491 2608.66 428.389 2587.1 402.186C2565.87 375.982 2558.41 343.641 2564.71 305.164C2570.35 269.009 2587.26 238.991 2615.46 215.108C2643.65 190.895 2676.16 178.787 2712.98 178.787C2749.79 178.787 2778.82 191.558 2800.05 217.099C2821.28 242.308 2828.41 273.321 2821.44 310.14C2820.78 317.437 2818.46 326.227 2814.48 336.509H2626.4C2627.73 352.43 2633.87 364.206 2644.81 371.835C2655.76 379.464 2669.52 383.278 2686.11 383.278C2710.52 383.278 2689.1 382.72 2829.79 382.699L2829.79 382.697C2873.32 382.697 2872.33 369.678 2876.97 341.152L2901.14 204.175H2860.88L2910.66 150.242L2921.75 87.4043L2963.11 2.33496ZM2709 236.503C2692.41 236.503 2677.65 240.815 2664.71 249.438C2652.11 258.062 2642.32 270.336 2635.36 286.257H2761.74C2761.4 269.341 2756.26 256.902 2746.31 248.941C2736.69 240.649 2724.25 236.503 2709 236.503Z" fill={isMobileMenuOpen ? (theme === 'dark' ? "white" : "#0B0F19") : logoTextFill}/>
+                                <path d="M2963.11 2.33496C2964.87 -1.27508 2970.22 -0.532666 2970.92 3.41895L2985.93 87.4043L2974.67 151.234L3006 204.409H2965.28L2941.15 341.152C2934.52 379.96 2921.09 407.159 2900.85 422.749C2885.36 434.884 2862.23 440.285 2838.08 441.106V441.491H2681.13C2640 441.491 2608.66 428.389 2587.1 402.186C2565.87 375.982 2558.41 343.641 2564.71 305.164C2570.35 269.009 2587.26 238.991 2615.46 215.108C2643.65 190.895 2676.16 178.787 2712.98 178.787C2749.79 178.787 2778.82 191.558 2800.05 217.099C2821.28 242.308 2828.41 273.321 2821.44 310.14C2820.78 317.437 2818.46 326.227 2814.48 336.509H2626.4C2627.73 352.43 2633.87 364.206 2644.81 371.835C2655.76 379.464 2669.52 383.278 2686.11 383.278C2710.52 383.278 2689.1 382.72 2829.79 382.699L2829.79 382.697C2873.32 382.697 2872.33 369.678 2876.97 341.152L2901.14 204.175H2860.88L2910.66 150.242L2921.75 87.4043L2963.11 2.33496ZM2709 236.503C2692.41 236.503 2677.65 240.815 2664.71 249.438C2652.11 258.062 2642.32 270.336 2635.36 286.257H2761.74C2761.4 269.341 2756.26 256.902 2746.31 248.941C2736.69 240.649 2724.25 236.503 2709 236.503Z"/>
                             </g>
                             <defs>
                                 <linearGradient id="navbar_logo_gradient" x1="250.846" y1="20.731" x2="250.846" y2="522.422" gradientUnits="userSpaceOnUse">
@@ -91,16 +104,8 @@ export default function Navbar() {
                         {navLinks.map((link) => {
                             const isActive = pathname === link.href;
 
-                            // 1. ACTIVE STATE STYLES
-                            // Use 'text-primary' if you want a brand color highlight, or 'text-white' if you want high contrast against dark bg
-                            const activeClass = isLightTransparent
-                                ? "text-primary font-extrabold" // Light Mode Transparent: Primary Color
-                                : "text-white font-extrabold";  // Dark Mode / Default: White
-
-                            // 2. INACTIVE STATE STYLES
-                            const inactiveClass = isLightTransparent
-                                ? "text-gray-600 hover:text-[#0B0F19]"
-                                : "text-gray-400 hover:text-white";
+                            const activeClass = "text-primary font-bold";
+                            const inactiveClass = "text-muted-foreground hover:text-foreground";
 
                             return (
                                 <Link
@@ -120,25 +125,49 @@ export default function Navbar() {
                         {/* Hamburger Button (Visible on Mobile) */}
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className={`lg:hidden p-2 rounded-full transition-colors ${isMobileMenuOpen ? 'text-foreground bg-accent' : iconClass}`}
+                            className="lg:hidden p-2 mt-1 rounded-full transition-colors text-muted-foreground hover:text-foreground bg-accent/50"
                         >
                             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
                         </button>
 
-                        <button className={`hidden md:flex ${iconClass} transition-colors`}>
+                        <button
+                            onClick={() => setIsSearchOpen(true)}
+                            className="hidden md:flex mt-1 text-muted-foreground hover:text-foreground transition-colors"
+                        >
                             <Search size={22} />
                         </button>
 
-                        <button className={`relative ${iconClass} transition-colors`}>
+                        {/* Cart Icon */}
+                        <Link href="/cart" className="relative text-muted-foreground hover:text-foreground transition-colors">
                             <ShoppingBag size={22} />
-                            <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-white text-[9px] font-bold flex items-center justify-center rounded-full ring-2 ring-[#0B0F19]">2</span>
-                        </button>
+                            <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-white text-[9px] font-bold flex items-center justify-center rounded-full ring-2 ring-background">2</span>
+                        </Link>
 
-                        <div className={`h-6 w-px hidden sm:block ${isLightTransparent ? 'bg-black/10' : 'bg-white/10'}`}></div>
+                        {/* 3. DYNAMIC USER AUTH SECTION (DESKTOP) */}
+                        {!isLoading && (
+                            session ? (
+                                <Link
+                                    href="/user/dashboard"
+                                    className="hidden sm:flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground font-bold font-heading hover:opacity-90 transition-opacity shadow-sm"
+                                    title="Go to Dashboard"
+                                >
+                                    {session.user?.name?.charAt(0).toUpperCase() || <User size={18} />}
+                                </Link>
+                            ) : (
+                                <Link
+                                    href="/login"
+                                    className={`hidden sm:flex font-bold text-sm transition-colors ${isLightTransparent ? 'text-[#0B0F19]' : 'text-muted-foreground hover:text-foreground'}`}
+                                >
+                                    Log In
+                                </Link>
+                            )
+                        )}
+
+                        <div className="h-6 w-px bg-border hidden sm:block"></div>
 
                         <Link
                             href="/services"
-                            className={`hidden sm:flex items-center gap-2 px-6 py-2.5 font-bold text-sm rounded-full transition-all shadow-md font-heading ${buttonClass}`}
+                            className="hidden sm:flex items-center gap-2 px-6 py-2.5 font-bold text-sm rounded-full transition-all shadow-md font-heading bg-foreground text-background hover:bg-primary hover:text-white"
                         >
                             Hire Us
                         </Link>
@@ -157,8 +186,8 @@ export default function Navbar() {
                         className="fixed inset-0 z-30 bg-background/95 backdrop-blur-3xl pt-24 px-6 flex flex-col lg:hidden"
                     >
                         {/* Background Gradients */}
-                        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-primary/20 rounded-full blur-[100px] -z-10" />
-                        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-purple-500/20 rounded-full blur-[100px] -z-10" />
+                        <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-primary/20 rounded-full blur-[100px] -z-10 opacity-20" />
+                        <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-purple-500/20 rounded-full blur-[100px] -z-10 opacity-20" />
 
                         <div className="flex flex-col gap-2 mt-8">
                             {navLinks.map((link, index) => {
@@ -193,6 +222,44 @@ export default function Navbar() {
                             transition={{ delay: 0.4 }}
                             className="mt-auto mb-10 flex flex-col gap-4"
                         >
+                            {/* 4. DYNAMIC MOBILE AUTH */}
+                            {!isLoading && (
+                                session ? (
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <Link
+                                            href="/user/dashboard"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className="flex items-center justify-center gap-2 py-3 bg-card border border-border rounded-lg font-bold text-foreground"
+                                        >
+                                            <LayoutDashboard size={18} /> Dashboard
+                                        </Link>
+                                        <button
+                                            onClick={() => signOut()}
+                                            className="flex items-center justify-center gap-2 py-3 bg-red-500/10 border border-red-500/20 rounded-lg font-bold text-red-500"
+                                        >
+                                            <LogOut size={18} /> Sign Out
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-2 gap-4 mt-2">
+                                        <Link
+                                            href="/login"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className="flex items-center justify-center py-3 border border-border rounded-lg font-bold text-foreground hover:bg-secondary transition-colors"
+                                        >
+                                            Log In
+                                        </Link>
+                                        <Link
+                                            href="/register"
+                                            onClick={() => setIsMobileMenuOpen(false)}
+                                            className="flex items-center justify-center py-3 border border-border rounded-lg font-bold text-foreground hover:bg-secondary transition-colors"
+                                        >
+                                            Sign Up
+                                        </Link>
+                                    </div>
+                                )
+                            )}
+
                             <Link
                                 href="/services"
                                 onClick={() => setIsMobileMenuOpen(false)}
@@ -202,7 +269,10 @@ export default function Navbar() {
                             </Link>
 
                             <div className="flex items-center justify-center gap-6 mt-4 text-muted-foreground">
-                                <button className="flex items-center gap-2 hover:text-foreground transition-colors">
+                                <button
+                                    onClick={() => { setIsMobileMenuOpen(false); setIsSearchOpen(true); }}
+                                    className="flex items-center gap-2 hover:text-foreground transition-colors"
+                                >
                                     <Search size={20} /> Search
                                 </button>
                                 <div className="h-4 w-px bg-border"></div>

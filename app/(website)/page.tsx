@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react"; // Added imports
+import {useEffect, useState} from "react";
 import TopBar from "@/components/layout/Topbar";
 import Navbar from "@/components/layout/Navbar";
-import { motion, AnimatePresence } from "framer-motion"; // Added AnimatePresence
-import { Search, ShieldCheck, Zap, TrendingUp } from "lucide-react";
+import {AnimatePresence, motion} from "framer-motion";
+import {Search, ShieldCheck, TrendingUp, Zap} from "lucide-react";
 import PopularProducts from "@/components/sections/home/PopularProducts";
 import BrowseCategories from "@/components/sections/home/BrowseCategories";
 import ServiceSection from "@/components/sections/home/ServiceSection";
@@ -19,6 +19,7 @@ import Footer from "@/components/layout/Footer";
 const words = ["Choose Better.", "Scale Faster.", "Hassle Free."];
 
 export default function Home() {
+
     // State for text rotation
     const [index, setIndex] = useState(0);
 

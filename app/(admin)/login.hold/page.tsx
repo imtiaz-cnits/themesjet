@@ -22,7 +22,7 @@ export default function LoginPage() {
 
                 <div className="max-w-md w-full mx-auto mt-16 lg:mt-0">
 
-                    <Link href="/" className="flex items-center gap-2 group pb-5 text-muted-foreground hover:text-foreground transition-colors">
+                    <Link href="/public" className="flex items-center gap-2 group pb-5 text-muted-foreground hover:text-foreground transition-colors">
                         <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
                         <span className="text-sm font-bold">Back to Home</span>
                     </Link>
