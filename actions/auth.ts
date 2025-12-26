@@ -3,22 +3,22 @@
 import * as z from "zod";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { signIn } from "@/auth";
+import { signIn } from "@/lib/auth"; // Updated import path
 import { AuthError } from "next-auth";
 
-// Validation Schema for Registration
+// --- Validation Schemas ---
 const RegisterSchema = z.object({
     name: z.string().min(1, "Name is required"),
     email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-// Validation Schema for Login
 const LoginSchema = z.object({
     email: z.string().email("Invalid email address"),
     password: z.string().min(1, "Password is required"),
 });
 
+// --- 1. Register Action ---
 export const register = async (values: z.infer<typeof RegisterSchema>) => {
     const validatedFields = RegisterSchema.safeParse(values);
 
@@ -28,7 +28,7 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
 
     const { email, password, name } = validatedFields.data;
 
-    // 1. Check if user exists
+    // Check if user exists
     const existingUser = await prisma.user.findUnique({
         where: { email },
     });
@@ -37,22 +37,23 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
         return { error: "Email already in use!" };
     }
 
-    // 2. Hash Password
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 3. Create User in MySQL
+    // Create user
     await prisma.user.create({
         data: {
             name,
             email,
             password: hashedPassword,
-            role: "USER", // Default role
+            role: "USER",
         },
     });
 
     return { success: "Account created!" };
 };
 
+// --- 2. Login Action (Credentials) ---
 export const login = async (values: z.infer<typeof LoginSchema>) => {
     const validatedFields = LoginSchema.safeParse(values);
 
@@ -62,11 +63,23 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 
     const { email, password } = validatedFields.data;
 
+    // Check user role for redirect
+    const existingUser = await prisma.user.findUnique({
+        where: { email }
+    });
+
+    if (!existingUser || !existingUser.email || !existingUser.password) {
+        return { error: "Email does not exist!" };
+    }
+
+    // Determine Redirect Path
+    const dashboardUrl = existingUser.role === "ADMIN" ? "/admin" : "/user/dashboard";
+
     try {
         await signIn("credentials", {
             email,
             password,
-            redirectTo: "/user/dashboard", // Default redirect after login
+            redirectTo: dashboardUrl,
         });
     } catch (error) {
         if (error instanceof AuthError) {
@@ -79,4 +92,9 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
         }
         throw error;
     }
+};
+
+// --- 3. Social Login Action ---
+export const socialLogin = async (provider: "google" | "github") => {
+    await signIn(provider, { redirectTo: "/user/dashboard" });
 };

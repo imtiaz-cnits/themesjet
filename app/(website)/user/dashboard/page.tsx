@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Download, User, Settings, LogOut, ShoppingBag, FileText, Heart, Clock, ChevronRight, CreditCard } from "lucide-react";
+import { Download, User, Settings, LogOut, ShoppingBag, FileText, Heart, Clock, CreditCard, Loader2 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
+import { signOut, useSession } from "next-auth/react";
 
 // Layout Imports
 import TopBar from "@/components/layout/Topbar";
@@ -40,7 +40,21 @@ const stats = [
 ];
 
 export default function UserDashboard() {
+    const { data: session } = useSession();
     const [activeTab, setActiveTab] = useState("overview");
+    const [isSigningOut, setIsSigningOut] = useState(false);
+
+    // Enhanced Sign Out Handler
+    const handleSignOut = async () => {
+        setIsSigningOut(true);
+
+        // 1. Clear any application specific local storage if needed (Optional)
+        // localStorage.removeItem("cart");
+
+        // 2. Trigger NextAuth SignOut
+        // This clears the session cookie and redirects to home
+        await signOut({ callbackUrl: "/" });
+    };
 
     // Sidebar Menu Items
     const menuItems = [
@@ -69,10 +83,26 @@ export default function UserDashboard() {
                     <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
                         <div>
                             <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-2">My Account</h1>
-                            <p className="text-muted-foreground">Welcome back, <span className="font-bold text-foreground">Alex</span>. Manage your downloads and profile.</p>
+                            <p className="text-muted-foreground">
+                                Welcome back, <span className="font-bold text-foreground">{session?.user?.name || "User"}</span>. Manage your downloads and profile.
+                            </p>
                         </div>
-                        <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-sm font-bold text-red-500 hover:bg-red-500/5 transition-colors">
-                            <LogOut size={16} /> Sign Out
+
+                        {/* FUNCTIONAL SIGN OUT BUTTON */}
+                        <button
+                            onClick={handleSignOut}
+                            disabled={isSigningOut}
+                            className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-sm font-bold text-red-500 hover:bg-red-500/5 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                            {isSigningOut ? (
+                                <>
+                                    <Loader2 size={16} className="animate-spin" /> Signing Out...
+                                </>
+                            ) : (
+                                <>
+                                    <LogOut size={16} /> Sign Out
+                                </>
+                            )}
                         </button>
                     </div>
 

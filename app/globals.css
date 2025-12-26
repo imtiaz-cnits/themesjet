@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@source "../node_modules/@uploadthing/react/dist";
+
 @theme {
     /* 1. LINK FONTS HERE */
     /* This tells Tailwind: "When I use font-heading, use the --font-primary variable" */

@@ -7,7 +7,7 @@ import FloatingControls from "@/components/layout/FloatingControls";
 
 // 2. Auth Imports
 import { SessionProvider } from "next-auth/react";
-import { auth } from "@/auth"; // Assumes auth.ts is at src/auth.ts
+import { auth } from "@/lib/auth"; // Assumes auth.ts is at src/auth.ts
 
 // 3. Configure Primary Font (Headings)
 const jakarta = Plus_Jakarta_Sans({
