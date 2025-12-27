@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useCart } from "@/context/CartContext"; // 1. Import Context
 import Link from "next/link";
+import Image from "next/image";
 import { Trash2, ArrowRight, ShieldCheck, ShoppingBag, ChevronLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -11,32 +12,12 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
 export default function CartPage() {
-    // Mock Cart Data
-    const [cartItems, setCartItems] = useState([
-        {
-            id: 1,
-            title: "DashLite - React Admin Template",
-            license: "Regular License",
-            price: 24.00,
-            image: "/images/product-1.jpg"
-        },
-        {
-            id: 2,
-            title: "SaaS Landing Kit",
-            license: "Extended License",
-            price: 120.00,
-            image: "/images/product-2.jpg"
-        }
-    ]);
+    // 2. Get Real Data from Context
+    const { items, removeFromCart, cartTotal } = useCart();
 
     // Calculations
-    const subtotal = cartItems.reduce((acc, item) => acc + item.price, 0);
-    const tax = subtotal * 0.05; // 5% handling/tax
-    const total = subtotal + tax;
-
-    const removeItem = (id: number) => {
-        setCartItems(cartItems.filter(item => item.id !== id));
-    };
+    const tax = cartTotal * 0.05; // 5% Tax/Handling (Example)
+    const total = cartTotal + tax;
 
     return (
         <main className="min-h-screen bg-background text-foreground font-body transition-colors duration-300 flex flex-col relative overflow-x-hidden">
@@ -55,11 +36,11 @@ export default function CartPage() {
                 <div className="max-w-7xl mx-auto px-6">
 
                     {/* Header */}
-                    <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
+                    <div className="flex flex-col md:flex-row justify-between mb-10 gap-4">
                         <div>
                             <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-2">Shopping Cart</h1>
                             <p className="text-muted-foreground">
-                                You have <span className="font-bold text-primary">{cartItems.length} items</span> in your cart.
+                                You have <span className="font-bold text-primary">{items.length} items</span> in your cart.
                             </p>
                         </div>
                         <Link href="/products" className="text-sm font-bold text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors">
@@ -67,13 +48,13 @@ export default function CartPage() {
                         </Link>
                     </div>
 
-                    {cartItems.length > 0 ? (
+                    {items.length > 0 ? (
                         <div className="flex flex-col lg:flex-row gap-12">
 
                             {/* LEFT: Cart Items List */}
                             <div className="flex-1 space-y-6">
                                 <AnimatePresence>
-                                    {cartItems.map((item) => (
+                                    {items.map((item) => (
                                         <motion.div
                                             key={item.id}
                                             layout
@@ -84,21 +65,27 @@ export default function CartPage() {
                                         >
                                             {/* Product Image */}
                                             <div className="w-full sm:w-32 aspect-video sm:aspect-square rounded-xl bg-muted relative overflow-hidden border border-border shrink-0">
-                                                {/* Use <Image /> in production */}
-                                                <div className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500" style={{ backgroundImage: `url(${item.image})` }} />
+                                                <Image
+                                                    src={item.image}
+                                                    alt={item.name}
+                                                    fill
+                                                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                                />
                                             </div>
 
                                             {/* Details */}
-                                            <div className="flex-1 text-center sm:text-left w-full">
+                                            <div className="flex-1 sm:text-left w-full">
                                                 <Link href={`/products/${item.id}`} className="font-heading font-bold text-foreground text-lg mb-1 hover:text-primary transition-colors block">
-                                                    {item.title}
+                                                    {item.name}
                                                 </Link>
-                                                <div className="flex items-center justify-center sm:justify-start gap-3 text-sm text-muted-foreground mb-4">
-                                                    <span className="bg-secondary px-2.5 py-1 rounded-md text-xs font-bold border border-border">{item.license}</span>
+                                                <div className="flex items-center mt-3 sm:justify-start gap-3 text-sm text-muted-foreground mb-4">
+                                                    <span className="bg-secondary px-2.5 py-1 rounded-md text-xs font-bold border border-border">
+                                                        {item.category || "Standard"} License
+                                                    </span>
                                                     <span>Instant Download</span>
                                                 </div>
                                                 <button
-                                                    onClick={() => removeItem(item.id)}
+                                                    onClick={() => removeFromCart(item.id)}
                                                     className="text-xs font-bold text-muted-foreground hover:text-red-500 flex items-center justify-center sm:justify-start gap-1 transition-colors"
                                                 >
                                                     <Trash2 size={14} /> Remove Item
@@ -122,10 +109,10 @@ export default function CartPage() {
                                     <div className="space-y-3 pb-6 border-b border-border mb-6">
                                         <div className="flex justify-between text-sm">
                                             <span className="text-muted-foreground">Subtotal</span>
-                                            <span className="font-bold text-foreground">${subtotal.toFixed(2)}</span>
+                                            <span className="font-bold text-foreground">${cartTotal.toFixed(2)}</span>
                                         </div>
                                         <div className="flex justify-between text-sm">
-                                            <span className="text-muted-foreground">Handling / Tax</span>
+                                            <span className="text-muted-foreground">Tax (5%)</span>
                                             <span className="font-bold text-foreground">${tax.toFixed(2)}</span>
                                         </div>
                                     </div>

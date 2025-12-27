@@ -6,7 +6,8 @@ import { usePathname } from "next/navigation";
 import { Search, ShoppingBag, Menu, X, ChevronRight, User, LogOut, LayoutDashboard } from "lucide-react";
 import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
-import { useSession, signOut } from "next-auth/react"; // 1. Import Auth Hooks
+import { useSession, signOut } from "next-auth/react";
+import { useCart } from "@/context/CartContext"; // 1. Import Cart Hook
 
 // Import the new Search Modal
 import SearchModal from "@/components/ui/SearchModal";
@@ -17,8 +18,9 @@ export default function Navbar() {
     const [mounted, setMounted] = useState(false);
     const pathname = usePathname();
 
-    // 2. Get Session Data
+    // 2. Get Session & Cart Data
     const { data: session, status } = useSession();
+    const { cartCount } = useCart(); // Get real cart count
     const isLoading = status === "loading";
 
     // State for Mobile Menu & Search Modal
@@ -52,11 +54,6 @@ export default function Navbar() {
 
     // LOGIC: Determine if we need "Light Mode" colors
     const isLightTransparent = mounted && theme === 'light' && !isScrolled && !isMobileMenuOpen;
-
-    // --- Dynamic Color Variables ---
-    const logoTextFill = isLightTransparent ? "#0B0F19" : "white";
-    const iconClass = isLightTransparent ? "text-[#0B0F19] hover:text-primary" : "text-gray-400 hover:text-white";
-    const buttonClass = isLightTransparent ? "bg-[#0B0F19] text-white hover:bg-primary" : "bg-white text-[#0B0F19] hover:bg-primary hover:text-white";
 
     const navbarBgClass = isScrolled
         ? "fixed bg-background/80 backdrop-blur-xl border-border py-4 top-0"
@@ -138,12 +135,17 @@ export default function Navbar() {
                         </button>
 
                         {/* Cart Icon */}
+                        {/* UPDATE: Use real cart count */}
                         <Link href="/cart" className="relative text-muted-foreground hover:text-foreground transition-colors">
                             <ShoppingBag size={22} />
-                            <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-white text-[9px] font-bold flex items-center justify-center rounded-full ring-2 ring-background">2</span>
+                            {cartCount > 0 && (
+                                <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-white text-[9px] font-bold flex items-center justify-center rounded-full ring-2 ring-background">
+                                    {cartCount}
+                                </span>
+                            )}
                         </Link>
 
-                        {/* 3. DYNAMIC USER AUTH SECTION (DESKTOP) */}
+                        {/* DYNAMIC USER AUTH SECTION */}
                         {!isLoading && (
                             session ? (
                                 <Link
@@ -222,7 +224,6 @@ export default function Navbar() {
                             transition={{ delay: 0.4 }}
                             className="mt-auto mb-10 flex flex-col gap-4"
                         >
-                            {/* 4. DYNAMIC MOBILE AUTH */}
                             {!isLoading && (
                                 session ? (
                                     <div className="grid grid-cols-2 gap-4">
