@@ -215,7 +215,7 @@ export default function ProductsBrowser({ initialProducts, totalCount, totalPage
                                                             });
                                                         }}
                                                         disabled={isInCart}
-                                                        className={`transition-colors ${isInCart ? 'text-green-500' : 'text-muted-foreground hover:text-primary'}`}
+                                                        className={`transition-colors ${isInCart ? 'text-green-500' : 'text-muted-foreground hover:text-primary cursor-pointer'}`}
                                                         title={isInCart ? "In Cart" : "Add to Cart"}
                                                     >
                                                         {isInCart ? <Check size={18} /> : <ShoppingCart size={18} />}

@@ -59,7 +59,7 @@ export default function AddToCartButton({ product, fullWidth = false }: AddToCar
         return (
             <button
                 disabled
-                className={`${baseClasses} ${widthClass} bg-green-500/10 text-green-600 border border-green-500/20 cursor-default`}
+                className={`${baseClasses} ${widthClass} bg-green-500/10 text-green-600 border border-green-500/20 cursor-pointer`}
             >
                 <Check size={18} />
                 {fullWidth ? "In Cart" : ""}
@@ -70,7 +70,7 @@ export default function AddToCartButton({ product, fullWidth = false }: AddToCar
     return (
         <button
             onClick={handleAdd}
-            className={`${baseClasses} ${widthClass} bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/25 active:scale-95`}
+            className={`${baseClasses} ${widthClass} bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/25 active:scale-95 cursor-pointer`}
         >
             {isAdded ? <Check size={18} /> : <ShoppingCart size={18} />}
             {fullWidth ? (isAdded ? "Added!" : "Add to Cart") : ""}
