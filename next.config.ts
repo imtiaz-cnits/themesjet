@@ -14,8 +14,13 @@ const nextConfig: NextConfig = {
         remotePatterns: [
             {
                 protocol: "https",
-                hostname: "utfs.io",
-                pathname: "/**" // Fix: Allow ALL paths (UploadThing uses /f/ and /a/)
+                hostname: "utfs.io", // Old UploadThing domain (keep for compatibility)
+                pathname: "/**"
+            },
+            {
+                protocol: "https",
+                hostname: "**.ufs.sh", // NEW UploadThing domain structure (Fixes your 500 error)
+                pathname: "/**"
             },
             {
                 protocol: "https",

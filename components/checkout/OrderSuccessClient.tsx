@@ -12,12 +12,14 @@ import Footer from "@/components/layout/Footer";
 
 export default function OrderSuccessClient({ order, userEmail }: { order: any, userEmail: string | null | undefined }) {
     const [copied, setCopied] = useState(false);
-    const { clearCart } = useCart();
+    const { clearCart, isLoaded } = useCart(); // 1. Get isLoaded
 
-    // Clear cart on mount
+    // 2. Clear cart ONLY after it has finished loading from LocalStorage
     useEffect(() => {
-        clearCart();
-    }, []);
+        if (isLoaded) {
+            clearCart();
+        }
+    }, [isLoaded, clearCart]);
 
     const handleCopy = () => {
         navigator.clipboard.writeText(order.id);
@@ -99,7 +101,7 @@ export default function OrderSuccessClient({ order, userEmail }: { order: any, u
 
                                     {/* Info */}
                                     <div className="flex-1 text-center md:text-left">
-                                        <h3 className="font-heading font-bold text-xl text-foreground mb-1">{item.product.name}</h3>
+                                        <h3 className="font-heading font-bold text-md text-foreground mb-1">{item.product.name}</h3>
                                         <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 text-xs text-muted-foreground mb-4">
                                             <span className="bg-secondary px-2 py-1 rounded border border-border">{item.product.category}</span>
                                             <span>Price: ${Number(item.price).toFixed(2)}</span>

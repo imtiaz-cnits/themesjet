@@ -3,7 +3,7 @@
 import * as z from "zod";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
-import { signIn } from "@/lib/auth"; // Updated import path
+import { signIn, signOut } from "@/lib/auth";
 import { AuthError } from "next-auth";
 
 // --- Validation Schemas ---
@@ -63,7 +63,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 
     const { email, password } = validatedFields.data;
 
-    // Check user role for redirect
+    // Check user exists
     const existingUser = await prisma.user.findUnique({
         where: { email }
     });
@@ -72,15 +72,20 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
         return { error: "Email does not exist!" };
     }
 
-    // Determine Redirect Path
+    // Determine Redirect Path based on Role
     const dashboardUrl = existingUser.role === "ADMIN" ? "/admin" : "/user/dashboard";
 
     try {
+        // FIX: Set redirect: false to prevent server-side redirect error
         await signIn("credentials", {
             email,
             password,
-            redirectTo: dashboardUrl,
+            redirect: false,
         });
+
+        // Return success and the URL so client can handle the hard redirect
+        return { success: true, redirectUrl: dashboardUrl };
+
     } catch (error) {
         if (error instanceof AuthError) {
             switch (error.type) {
@@ -97,4 +102,9 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 // --- 3. Social Login Action ---
 export const socialLogin = async (provider: "google" | "github") => {
     await signIn(provider, { redirectTo: "/user/dashboard" });
+};
+
+// --- 4. Logout Action ---
+export const logout = async () => {
+    await signOut({ redirectTo: "/" });
 };

@@ -3,8 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Github, ArrowRight, ArrowLeft, Lock, Mail, AlertCircle } from "lucide-react";
-import { login, socialLogin } from "@/actions/auth"; // Import both actions
+import { Github, ArrowRight, ArrowLeft, Lock, Mail, AlertCircle, Loader2 } from "lucide-react";
+import { login, socialLogin } from "@/actions/auth";
+import { toast } from "sonner"; // Use sonner for consistent toasts
 
 export default function LoginPage() {
     const [error, setError] = useState<string | undefined>("");
@@ -21,9 +22,14 @@ export default function LoginPage() {
 
         try {
             const result = await login({ email, password });
+
             if (result?.error) {
                 setError(result.error);
                 setIsPending(false);
+            } else {
+                // SUCCESS: Force Hard Reload
+                // This fixes the Navbar Avatar issue instantly
+                window.location.href = "/user/dashboard";
             }
         } catch (err) {
             setError("Something went wrong. Please try again.");
@@ -117,7 +123,7 @@ export default function LoginPage() {
                         </div>
 
                         <button type="submit" disabled={isPending} className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-primary-foreground font-bold py-3.5 rounded-lg transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
-                            {isPending ? "Signing In..." : <>Sign In <ArrowRight size={18} /></>}
+                            {isPending ? <><Loader2 size={18} className="animate-spin" /> Signing In...</> : <>Sign In <ArrowRight size={18} /></>}
                         </button>
                     </form>
 

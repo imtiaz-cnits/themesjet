@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
 
 // Define the shape of a Cart Item
 export interface CartItem {
@@ -18,6 +18,7 @@ interface CartContextType {
     clearCart: () => void;
     cartCount: number;
     cartTotal: number;
+    isLoaded: boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -26,7 +27,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const [items, setItems] = useState<CartItem[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
 
-    // 1. Load Cart from LocalStorage on mount
+    // 1. Load Cart from LocalStorage
     useEffect(() => {
         if (typeof window !== "undefined") {
             const savedCart = localStorage.getItem("themesjet_cart");
@@ -41,35 +42,38 @@ export function CartProvider({ children }: { children: ReactNode }) {
         }
     }, []);
 
-    // 2. Save Cart to LocalStorage whenever it changes
+    // 2. Save Cart to LocalStorage
     useEffect(() => {
         if (isLoaded && typeof window !== "undefined") {
             localStorage.setItem("themesjet_cart", JSON.stringify(items));
         }
     }, [items, isLoaded]);
 
-    // Actions
-    const addToCart = (product: CartItem) => {
-        // Prevent duplicate items (optional for digital products)
-        const exists = items.find((i) => i.id === product.id);
-        if (exists) return;
-        setItems((prev) => [...prev, product]);
-    };
+    // FIX: Wrap actions in useCallback to prevent infinite loops in useEffects
+    const addToCart = useCallback((product: CartItem) => {
+        setItems((prev) => {
+            const exists = prev.find((i) => i.id === product.id);
+            if (exists) return prev;
+            return [...prev, product];
+        });
+    }, []);
 
-    const removeFromCart = (id: string) => {
+    const removeFromCart = useCallback((id: string) => {
         setItems((prev) => prev.filter((item) => item.id !== id));
-    };
+    }, []);
 
-    const clearCart = () => {
+    const clearCart = useCallback(() => {
         setItems([]);
-    };
+        if (typeof window !== "undefined") {
+            localStorage.removeItem("themesjet_cart");
+        }
+    }, []);
 
-    // Derived State
     const cartCount = items.length;
     const cartTotal = items.reduce((total, item) => total + item.price, 0);
 
     return (
-        <CartContext.Provider value={{ items, addToCart, removeFromCart, clearCart, cartCount, cartTotal }}>
+        <CartContext.Provider value={{ items, addToCart, removeFromCart, clearCart, cartCount, cartTotal, isLoaded }}>
             {children}
         </CartContext.Provider>
     );

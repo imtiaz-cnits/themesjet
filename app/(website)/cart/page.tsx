@@ -1,26 +1,53 @@
 "use client";
 
-import { useCart } from "@/context/CartContext"; // 1. Import Context
+import { useState } from "react";
+import { useCart } from "@/context/CartContext";
+import { useSession } from "next-auth/react"; // Import Session
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Trash2, ArrowRight, ShieldCheck, ShoppingBag, ChevronLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Layout Imports
+// Components
 import TopBar from "@/components/layout/Topbar";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import LoginModal from "@/components/auth/LoginModal"; // Import the Modal
 
 export default function CartPage() {
-    // 2. Get Real Data from Context
     const { items, removeFromCart, cartTotal } = useCart();
+    const { status } = useSession(); // Check auth status
+    const router = useRouter();
+
+    // Login Modal State
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
     // Calculations
-    const tax = cartTotal * 0.05; // 5% Tax/Handling (Example)
+    const tax = cartTotal * 0.05;
     const total = cartTotal + tax;
+
+    // Handle Checkout Click
+    const handleProceedToCheckout = (e: React.MouseEvent) => {
+        e.preventDefault();
+
+        if (status === "authenticated") {
+            // User is logged in -> Go to checkout
+            router.push("/checkout");
+        } else {
+            // User NOT logged in -> Open Modal
+            setIsLoginModalOpen(true);
+        }
+    };
 
     return (
         <main className="min-h-screen bg-background text-foreground font-body transition-colors duration-300 flex flex-col relative overflow-x-hidden">
+
+            {/* --- LOGIN MODAL --- */}
+            <LoginModal
+                isOpen={isLoginModalOpen}
+                onClose={() => setIsLoginModalOpen(false)}
+            />
 
             {/* --- GLOBAL BACKGROUND GRADIENTS --- */}
             <div className="fixed inset-0 z-0 pointer-events-none">
@@ -36,7 +63,7 @@ export default function CartPage() {
                 <div className="max-w-7xl mx-auto px-6">
 
                     {/* Header */}
-                    <div className="flex flex-col md:flex-row justify-between mb-10 gap-4">
+                    <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
                         <div>
                             <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-2">Shopping Cart</h1>
                             <p className="text-muted-foreground">
@@ -74,11 +101,11 @@ export default function CartPage() {
                                             </div>
 
                                             {/* Details */}
-                                            <div className="flex-1 sm:text-left w-full">
+                                            <div className="flex-1 text-center sm:text-left w-full">
                                                 <Link href={`/products/${item.id}`} className="font-heading font-bold text-foreground text-lg mb-1 hover:text-primary transition-colors block">
                                                     {item.name}
                                                 </Link>
-                                                <div className="flex items-center mt-3 sm:justify-start gap-3 text-sm text-muted-foreground mb-4">
+                                                <div className="flex items-center justify-center sm:justify-start gap-3 text-sm text-muted-foreground mb-4">
                                                     <span className="bg-secondary px-2.5 py-1 rounded-md text-xs font-bold border border-border">
                                                         {item.category || "Standard"} License
                                                     </span>
@@ -125,12 +152,13 @@ export default function CartPage() {
                                         </div>
                                     </div>
 
-                                    <Link
-                                        href="/checkout"
+                                    {/* UPDATED CHECKOUT BUTTON */}
+                                    <button
+                                        onClick={handleProceedToCheckout}
                                         className="w-full py-4 bg-primary text-primary-foreground font-bold rounded-xl shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all flex items-center justify-center gap-2 mb-4"
                                     >
                                         Proceed to Checkout <ArrowRight size={18} />
-                                    </Link>
+                                    </button>
 
                                     <div className="flex items-center justify-center gap-2 text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
                                         <ShieldCheck size={14} className="text-green-500" /> Secure 256-bit SSL Payment

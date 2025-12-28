@@ -7,9 +7,9 @@ import { Search, ShoppingBag, Menu, X, ChevronRight, User, LogOut, LayoutDashboa
 import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession, signOut } from "next-auth/react";
-import { useCart } from "@/context/CartContext"; // 1. Import Cart Hook
+import { useCart } from "@/context/CartContext";
+import Image from "next/image";
 
-// Import the new Search Modal
 import SearchModal from "@/components/ui/SearchModal";
 
 export default function Navbar() {
@@ -18,16 +18,13 @@ export default function Navbar() {
     const [mounted, setMounted] = useState(false);
     const pathname = usePathname();
 
-    // 2. Get Session & Cart Data
     const { data: session, status } = useSession();
-    const { cartCount } = useCart(); // Get real cart count
+    const { cartCount } = useCart();
     const isLoading = status === "loading";
 
-    // State for Mobile Menu & Search Modal
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-    // Navigation Links Data
     const navLinks = [
         { name: "Home", href: "/" },
         { name: "Products", href: "/products" },
@@ -52,9 +49,7 @@ export default function Navbar() {
         }
     }, [isMobileMenuOpen, isSearchOpen]);
 
-    // LOGIC: Determine if we need "Light Mode" colors
     const isLightTransparent = mounted && theme === 'light' && !isScrolled && !isMobileMenuOpen;
-
     const navbarBgClass = isScrolled
         ? "fixed bg-background/80 backdrop-blur-xl border-border py-4 top-0"
         : "absolute bg-transparent border-transparent py-6 top-0 lg:top-[40px]";
@@ -63,13 +58,11 @@ export default function Navbar() {
 
     return (
         <>
-            {/* --- SEARCH MODAL COMPONENT --- */}
             <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
 
             <nav className={`w-full z-40 transition-all duration-300 border-b ${navbarBgClass}`}>
                 <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
 
-                    {/* --- LOGO --- */}
                     <Link href="/" className="flex items-center gap-3 group z-50 max-w-[200px]">
                         <svg className="h-8 w-auto" viewBox="0 0 3006 542" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="251" cy="271.5" r="250.5" fill="white"/>
@@ -96,14 +89,11 @@ export default function Navbar() {
                         </svg>
                     </Link>
 
-                    {/* Desktop Menu */}
                     <div className="hidden lg:flex items-center gap-10 text-base font-medium font-body transition-colors duration-300">
                         {navLinks.map((link) => {
                             const isActive = pathname === link.href;
-
                             const activeClass = "text-primary font-bold";
                             const inactiveClass = "text-muted-foreground hover:text-foreground";
-
                             return (
                                 <Link
                                     key={link.name}
@@ -116,10 +106,7 @@ export default function Navbar() {
                         })}
                     </div>
 
-                    {/* Right Actions */}
                     <div className="flex items-center gap-4 sm:gap-6 z-50">
-
-                        {/* Hamburger Button (Visible on Mobile) */}
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                             className="lg:hidden p-2 mt-1 rounded-full transition-colors text-muted-foreground hover:text-foreground bg-accent/50"
@@ -127,15 +114,10 @@ export default function Navbar() {
                             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
                         </button>
 
-                        <button
-                            onClick={() => setIsSearchOpen(true)}
-                            className="hidden md:flex mt-1 text-muted-foreground hover:text-foreground transition-colors"
-                        >
+                        <button onClick={() => setIsSearchOpen(true)} className="hidden md:flex mt-1 text-muted-foreground hover:text-foreground transition-colors">
                             <Search size={22} />
                         </button>
 
-                        {/* Cart Icon */}
-                        {/* UPDATE: Use real cart count */}
                         <Link href="/cart" className="relative text-muted-foreground hover:text-foreground transition-colors">
                             <ShoppingBag size={22} />
                             {cartCount > 0 && (
@@ -145,15 +127,23 @@ export default function Navbar() {
                             )}
                         </Link>
 
-                        {/* DYNAMIC USER AUTH SECTION */}
                         {!isLoading && (
-                            session ? (
+                            session?.user ? (
                                 <Link
                                     href="/user/dashboard"
-                                    className="hidden sm:flex items-center justify-center w-8 h-8 rounded-full bg-primary text-primary-foreground font-bold font-heading hover:opacity-90 transition-opacity shadow-sm"
+                                    className="hidden sm:flex items-center justify-center w-9 h-9 rounded-full bg-primary text-primary-foreground font-bold font-heading hover:opacity-90 transition-opacity shadow-sm overflow-hidden relative border border-border"
                                     title="Go to Dashboard"
                                 >
-                                    {session.user?.name?.charAt(0).toUpperCase() || <User size={18} />}
+                                    {session.user.image ? (
+                                        <Image
+                                            src={session.user.image}
+                                            alt={session.user.name || "User"}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    ) : (
+                                        session.user.name?.charAt(0).toUpperCase() || <User size={18} />
+                                    )}
                                 </Link>
                             ) : (
                                 <Link
@@ -177,7 +167,6 @@ export default function Navbar() {
                 </div>
             </nav>
 
-            {/* --- FULL SCREEN MOBILE MENU OVERLAY --- */}
             <AnimatePresence>
                 {isMobileMenuOpen && (
                     <motion.div
@@ -187,7 +176,6 @@ export default function Navbar() {
                         transition={{ duration: 0.3, ease: "easeInOut" }}
                         className="fixed inset-0 z-30 bg-background/95 backdrop-blur-3xl pt-24 px-6 flex flex-col lg:hidden"
                     >
-                        {/* Background Gradients */}
                         <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-primary/20 rounded-full blur-[100px] -z-10 opacity-20" />
                         <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-purple-500/20 rounded-full blur-[100px] -z-10 opacity-20" />
 
@@ -217,7 +205,6 @@ export default function Navbar() {
                             })}
                         </div>
 
-                        {/* Mobile Actions Footer */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
