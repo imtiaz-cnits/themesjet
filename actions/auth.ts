@@ -28,29 +28,34 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
 
     const { email, password, name } = validatedFields.data;
 
-    // Check if user exists
-    const existingUser = await prisma.user.findUnique({
-        where: { email },
-    });
+    try {
+        // Check if user exists
+        const existingUser = await prisma.user.findUnique({
+            where: { email },
+        });
 
-    if (existingUser) {
-        return { error: "Email already in use!" };
+        if (existingUser) {
+            return { error: "Email already in use!" };
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create user
+        await prisma.user.create({
+            data: {
+                name,
+                email,
+                password: hashedPassword,
+                role: "USER",
+            },
+        });
+
+        return { success: "Account created successfully!" };
+    } catch (error) {
+        console.error("Registration Error:", error);
+        return { error: "Something went wrong during registration." };
     }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create user
-    await prisma.user.create({
-        data: {
-            name,
-            email,
-            password: hashedPassword,
-            role: "USER",
-        },
-    });
-
-    return { success: "Account created!" };
 };
 
 // --- 2. Login Action (Credentials) ---
@@ -63,7 +68,6 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 
     const { email, password } = validatedFields.data;
 
-    // Check user exists
     const existingUser = await prisma.user.findUnique({
         where: { email }
     });
@@ -72,18 +76,15 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
         return { error: "Email does not exist!" };
     }
 
-    // Determine Redirect Path based on Role
     const dashboardUrl = existingUser.role === "ADMIN" ? "/admin" : "/user/dashboard";
 
     try {
-        // FIX: Set redirect: false to prevent server-side redirect error
         await signIn("credentials", {
             email,
             password,
             redirect: false,
         });
 
-        // Return success and the URL so client can handle the hard redirect
         return { success: true, redirectUrl: dashboardUrl };
 
     } catch (error) {

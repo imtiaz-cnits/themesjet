@@ -9,7 +9,7 @@ import { format } from "date-fns";
 import Image from "next/image";
 import { UploadButton } from "@/lib/uploadthing";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation"; // Added useSearchParams
 import { updateUserProfile } from "@/actions/user";
 
 // Layout Imports
@@ -32,9 +32,14 @@ interface DashboardProps {
 
 export default function UserDashboardClient({ user, stats, purchases }: DashboardProps) {
     const { data: session, update } = useSession();
-    const [activeTab, setActiveTab] = useState("overview");
-    const [isSigningOut, setIsSigningOut] = useState(false);
     const router = useRouter();
+    const searchParams = useSearchParams(); // Hook to get query params
+
+    // Initialize activeTab based on URL query param 'tab'
+    const initialTab = searchParams.get("tab") || "overview";
+    const [activeTab, setActiveTab] = useState(initialTab);
+
+    const [isSigningOut, setIsSigningOut] = useState(false);
 
     // Settings State
     const [firstName, setFirstName] = useState(user.name?.split(" ")[0] || "");
@@ -42,6 +47,14 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
     const [emailNotifications, setEmailNotifications] = useState(true);
     const [avatarUrl, setAvatarUrl] = useState(user.image || "");
     const [isSaving, setIsSaving] = useState(false);
+
+    // Effect to update activeTab when URL changes (e.g. navigation via Navbar)
+    useEffect(() => {
+        const tab = searchParams.get("tab");
+        if (tab && ["overview", "downloads", "settings"].includes(tab)) {
+            setActiveTab(tab);
+        }
+    }, [searchParams]);
 
     // Sync state if session updates externally
     useEffect(() => {
@@ -55,6 +68,12 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
         }
     }, [session]);
 
+    // Helper to switch tabs and update URL
+    const handleTabChange = (tabId: string) => {
+        setActiveTab(tabId);
+        router.push(`/user/dashboard?tab=${tabId}`, { scroll: false });
+    };
+
     const handleSignOut = async () => {
         setIsSigningOut(true);
         localStorage.removeItem("themesjet_cart");
@@ -66,7 +85,6 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
         setIsSaving(true);
 
         try {
-            // A. Update Database
             const result = await updateUserProfile({ firstName, lastName, image: avatarUrl });
 
             if (result.error) {
@@ -74,7 +92,6 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
                 return;
             }
 
-            // B. Update Session (Triggers `jwt` callback in auth.ts)
             await update({
                 user: {
                     name: `${firstName} ${lastName}`,
@@ -111,14 +128,14 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
             <div className="flex-grow pt-32 pb-20 relative z-10">
                 <div className="max-w-7xl mx-auto px-6">
                     {/* Header */}
-                    <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+                    <div className="flex flex-col md:flex-row justify-between items-start mb-12 gap-4">
                         <div>
                             <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-2">My Account</h1>
                             <p className="text-muted-foreground">
                                 Welcome back, <span className="font-bold text-foreground">{session?.user?.name || "User"}</span>.
                             </p>
                         </div>
-                        <button onClick={handleSignOut} disabled={isSigningOut} className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-sm font-bold text-red-500 hover:bg-red-500/5 transition-colors">
+                        <button onClick={handleSignOut} disabled={isSigningOut} className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border text-sm font-bold text-red-500 hover:bg-red-500/5 transition-colors cursor-pointer">
                             {isSigningOut ? <Loader2 size={16} className="animate-spin" /> : <LogOut size={16} />}
                             {isSigningOut ? "Signing Out..." : "Sign Out"}
                         </button>
@@ -132,8 +149,8 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
                                     {menuItems.map((item) => (
                                         <button
                                             key={item.id}
-                                            onClick={() => setActiveTab(item.id)}
-                                            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === item.id ? "bg-primary text-primary-foreground shadow-md shadow-primary/20" : "text-muted-foreground hover:text-foreground hover:bg-secondary"}`}
+                                            onClick={() => handleTabChange(item.id)} // Updated to handle URL change
+                                            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === item.id ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 cursor-pointer" : "text-muted-foreground hover:text-foreground hover:bg-secondary cursor-pointer"}`}
                                         >
                                             <item.icon size={18} /> {item.label}
                                         </button>
@@ -177,7 +194,7 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
                                         <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
                                             <div className="p-6 border-b border-border flex justify-between items-center">
                                                 <h3 className="font-heading font-bold text-lg text-foreground">Recent Activity</h3>
-                                                <button onClick={() => setActiveTab("downloads")} className="text-xs font-bold text-primary hover:underline">View All</button>
+                                                <button onClick={() => handleTabChange("downloads")} className="text-xs font-bold text-primary hover:underline cursor-pointer">View All</button>
                                             </div>
                                             <div className="divide-y divide-border">
                                                 {purchases.slice(0, 3).map((item) => (
@@ -268,7 +285,7 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
                                                     <div className="w-full h-full flex items-center justify-center text-muted-foreground"><User size={32} /></div>
                                                 )}
                                             </div>
-                                            <div className="flex flex-col items-start">
+                                            <div>
                                                 <h3 className="font-bold text-foreground mb-1">Profile Photo</h3>
                                                 <p className="text-xs text-muted-foreground mb-3">Recommended 300x300px. JPG, PNG.</p>
 
@@ -335,7 +352,7 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
                                                 </div>
                                             </div>
                                             <div className="flex justify-end pt-4">
-                                                <button type="submit" disabled={isSaving} className="px-8 py-3 bg-primary text-primary-foreground font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center gap-2 disabled:opacity-50">
+                                                <button type="submit" disabled={isSaving} className="px-8 py-3 bg-primary text-primary-foreground font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center gap-2 disabled:opacity-50 cursor-pointer">
                                                     {isSaving && <Loader2 size={16} className="animate-spin" />} {isSaving ? "Saving..." : "Save Changes"}
                                                 </button>
                                             </div>

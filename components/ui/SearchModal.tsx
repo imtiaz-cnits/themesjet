@@ -74,7 +74,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                                 />
                                 <button
                                     onClick={onClose}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-md text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+                                    className="absolute cursor-pointer right-4 top-1/2 -translate-y-1/2 p-1 rounded-md text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
                                 >
                                     <X size={18} />
                                 </button>
@@ -90,7 +90,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                                             <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3 px-2">Recent</h3>
                                             <div className="space-y-1">
                                                 {recentSearches.map((item) => (
-                                                    <button key={item} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary transition-colors text-left text-sm text-foreground group">
+                                                    <button key={item} className="w-full flex cursor-pointer items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary transition-colors text-left text-sm text-foreground group">
                                                         <Clock size={14} className="text-muted-foreground group-hover:text-primary transition-colors" />
                                                         {item}
                                                     </button>

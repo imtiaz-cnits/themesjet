@@ -4,17 +4,23 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Download, FileText, Check, ArrowRight, Copy, ShieldCheck, Home, FileCode } from "lucide-react";
+import { Download, FileText, Check, ArrowRight, Copy, ShieldCheck, Home, FileCode, Loader2 } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import TopBar from "@/components/layout/Topbar";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
+// PDF Imports
+import { pdf } from "@react-pdf/renderer";
+import { InvoicePDF } from "@/components/invoice/InvoicePDF";
+import { toast } from "sonner";
+
 export default function OrderSuccessClient({ order, userEmail }: { order: any, userEmail: string | null | undefined }) {
     const [copied, setCopied] = useState(false);
-    const { clearCart, isLoaded } = useCart(); // 1. Get isLoaded
+    const [isGeneratingPdf, setIsGeneratingPdf] = useState(false); // State for PDF loader
+    const { clearCart, isLoaded } = useCart();
 
-    // 2. Clear cart ONLY after it has finished loading from LocalStorage
+    // Clear cart ONLY after it has finished loading from LocalStorage
     useEffect(() => {
         if (isLoaded) {
             clearCart();
@@ -25,6 +31,33 @@ export default function OrderSuccessClient({ order, userEmail }: { order: any, u
         navigator.clipboard.writeText(order.id);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
+    };
+
+    // --- HANDLE INVOICE DOWNLOAD ---
+    const handleDownloadInvoice = async () => {
+        setIsGeneratingPdf(true);
+        try {
+            // Generate PDF Blob
+            const blob = await pdf(<InvoicePDF order={order} userEmail={userEmail} />).toBlob();
+
+            // Create Download Link
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `Invoice-${order.id.slice(-8)}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+
+            // Cleanup
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            toast.success("Invoice downloaded successfully!");
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to generate invoice.");
+        } finally {
+            setIsGeneratingPdf(false);
+        }
     };
 
     return (
@@ -69,13 +102,20 @@ export default function OrderSuccessClient({ order, userEmail }: { order: any, u
                                 <span>Order ID:</span>
                                 <div className="flex items-center gap-2 bg-background border border-border px-3 py-1 rounded-lg text-foreground font-mono font-bold text-xs sm:text-sm truncate max-w-[200px] sm:max-w-none">
                                     {order.id}
-                                    <button onClick={handleCopy} className="hover:text-primary transition-colors">
+                                    <button onClick={handleCopy} className="hover:text-primary transition-colors cursor-pointer">
                                         {copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
                                     </button>
                                 </div>
                             </div>
-                            <button className="flex items-center gap-2 text-sm font-bold text-primary hover:underline">
-                                <FileText size={16} /> Download Invoice
+
+                            {/* DOWNLOAD INVOICE BUTTON */}
+                            <button
+                                onClick={handleDownloadInvoice}
+                                disabled={isGeneratingPdf}
+                                className="flex items-center gap-2 text-sm font-bold text-primary hover:underline cursor-pointer disabled:opacity-50 disabled:no-underline"
+                            >
+                                {isGeneratingPdf ? <Loader2 size={16} className="animate-spin" /> : <FileText size={16} />}
+                                {isGeneratingPdf ? "Generating..." : "Download Invoice"}
                             </button>
                         </div>
 
@@ -111,7 +151,7 @@ export default function OrderSuccessClient({ order, userEmail }: { order: any, u
                                     {/* Actions */}
                                     <div className="flex flex-col gap-3 w-full md:w-auto">
                                         <Link
-                                            href={item.product.fileUrl} // Direct download link from UploadThing
+                                            href={item.product.fileUrl}
                                             target="_blank"
                                             className="px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center justify-center gap-2"
                                         >

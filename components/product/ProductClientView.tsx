@@ -5,7 +5,9 @@ import Image from "next/image";
 import { Star, Check, FileText, Code, ShoppingCart, Heart, ShieldCheck, Zap, Globe, Eye } from "lucide-react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
-import AddToCartButton from "./AddToCartButton"; // 1. Import Button
+import { useRouter } from "next/navigation"; // 1. Import Router
+import { useCart } from "@/context/CartContext"; // 2. Import Cart Hook
+import AddToCartButton from "./AddToCartButton";
 
 interface ProductProps {
     id: string;
@@ -24,6 +26,23 @@ interface ProductProps {
 
 export default function ProductClientView({ product }: { product: ProductProps }) {
     const [activeTab, setActiveTab] = useState("details");
+    const router = useRouter(); // Initialize router
+    const { addToCart } = useCart(); // Get cart action
+
+    // 3. Handle Buy Now Logic
+    const handleBuyNow = () => {
+        // Add item to cart state
+        addToCart({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.imageUrl,
+            category: product.category,
+        });
+
+        // Redirect immediately to checkout
+        router.push("/checkout");
+    };
 
     return (
         <div className="max-w-7xl mx-auto px-6 py-10">
@@ -54,7 +73,7 @@ export default function ProductClientView({ product }: { product: ProductProps }
                         </div>
                     </div>
 
-                    {/* Tabs and Description omitted for brevity, keeping existing structure... */}
+                    {/* Tabs and Description */}
                     <div className="border-b border-border mb-8">
                         <nav className="flex gap-8">
                             {['details', 'reviews', 'support'].map((tab) => (
@@ -65,7 +84,6 @@ export default function ProductClientView({ product }: { product: ProductProps }
 
                     <div className="prose prose-neutral dark:prose-invert max-w-none text-muted-foreground">
                         <p className="mb-6 text-lg leading-relaxed whitespace-pre-wrap">{product.description}</p>
-                        {/* Features List... */}
                     </div>
                 </div>
 
@@ -90,10 +108,14 @@ export default function ProductClientView({ product }: { product: ProductProps }
                             </ul>
 
                             <div className="space-y-3">
-                                {/* 2. Use the Reusable Button */}
+                                {/* Use the Reusable Button */}
                                 <AddToCartButton product={product} fullWidth={true} />
 
-                                <button className="w-full py-3.5 bg-secondary text-secondary-foreground font-bold rounded-xl hover:bg-muted transition-colors border border-border">
+                                {/* Buy Now Button */}
+                                <button
+                                    onClick={handleBuyNow}
+                                    className="w-full py-3.5 bg-secondary text-secondary-foreground font-bold rounded-xl hover:bg-muted transition-colors border border-border cursor-pointer"
+                                >
                                     Buy Now
                                 </button>
                             </div>

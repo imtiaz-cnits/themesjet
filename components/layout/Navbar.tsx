@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { Search, ShoppingBag, Menu, X, ChevronRight, User, LogOut, LayoutDashboard } from "lucide-react";
+import { Search, ShoppingBag, Menu, X, ChevronRight, User, LogOut, LayoutDashboard, Settings, Download } from "lucide-react";
 import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession, signOut } from "next-auth/react";
@@ -24,6 +24,9 @@ export default function Navbar() {
 
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+
+    const profileMenuRef = useRef<HTMLDivElement>(null);
 
     const navLinks = [
         { name: "Home", href: "/" },
@@ -48,6 +51,17 @@ export default function Navbar() {
             document.body.style.overflow = "unset";
         }
     }, [isMobileMenuOpen, isSearchOpen]);
+
+    // Handle Click Outside Profile Menu
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+                setIsProfileMenuOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     const isLightTransparent = mounted && theme === 'light' && !isScrolled && !isMobileMenuOpen;
     const navbarBgClass = isScrolled
@@ -114,7 +128,7 @@ export default function Navbar() {
                             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
                         </button>
 
-                        <button onClick={() => setIsSearchOpen(true)} className="hidden md:flex mt-1 text-muted-foreground hover:text-foreground transition-colors">
+                        <button onClick={() => setIsSearchOpen(true)} className="hidden cursor-pointer md:flex mt-1 text-muted-foreground hover:text-foreground transition-colors">
                             <Search size={22} />
                         </button>
 
@@ -129,22 +143,75 @@ export default function Navbar() {
 
                         {!isLoading && (
                             session?.user ? (
-                                <Link
-                                    href="/user/dashboard"
-                                    className="hidden sm:flex items-center justify-center w-9 h-9 rounded-full bg-primary text-primary-foreground font-bold font-heading hover:opacity-90 transition-opacity shadow-sm overflow-hidden relative border border-border"
-                                    title="Go to Dashboard"
-                                >
-                                    {session.user.image ? (
-                                        <Image
-                                            src={session.user.image}
-                                            alt={session.user.name || "User"}
-                                            fill
-                                            className="object-cover"
-                                        />
-                                    ) : (
-                                        session.user.name?.charAt(0).toUpperCase() || <User size={18} />
-                                    )}
-                                </Link>
+                                <div className="relative" ref={profileMenuRef}>
+                                    <button
+                                        onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                                        className="hidden sm:flex items-center justify-center w-9 h-9 rounded-full bg-primary text-primary-foreground font-bold font-heading hover:opacity-90 transition-opacity shadow-sm overflow-hidden relative border border-border cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+                                        title="Profile Menu"
+                                    >
+                                        {session.user.image ? (
+                                            <Image
+                                                src={session.user.image}
+                                                alt={session.user.name || "User"}
+                                                fill
+                                                className="object-cover"
+                                            />
+                                        ) : (
+                                            session.user.name?.charAt(0).toUpperCase() || <User size={18} />
+                                        )}
+                                    </button>
+
+                                    {/* --- DROPDOWN MENU --- */}
+                                    <AnimatePresence>
+                                        {isProfileMenuOpen && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                                transition={{ duration: 0.15 }}
+                                                className="absolute right-0 top-full mt-2 w-60 bg-card border border-border rounded-xl shadow-2xl overflow-hidden z-50 origin-top-right"
+                                            >
+                                                <div className="px-4 py-4 border-b border-border">
+                                                    <p className="text-sm font-bold text-foreground truncate">{session.user.name}</p>
+                                                    <p className="text-xs text-muted-foreground truncate">{session.user.email}</p>
+                                                </div>
+
+                                                <div className="py-2">
+                                                    <Link
+                                                        href="/user/dashboard?tab=overview" // FIX: Added query param
+                                                        onClick={() => setIsProfileMenuOpen(false)}
+                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                                                    >
+                                                        <LayoutDashboard size={16} className="text-muted-foreground" /> Overview
+                                                    </Link>
+                                                    <Link
+                                                        href="/user/dashboard?tab=downloads" // FIX: Added query param
+                                                        onClick={() => setIsProfileMenuOpen(false)}
+                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                                                    >
+                                                        <Download size={16} className="text-muted-foreground" /> My Downloads
+                                                    </Link>
+                                                    <Link
+                                                        href="/user/dashboard?tab=settings" // FIX: Added query param
+                                                        onClick={() => setIsProfileMenuOpen(false)}
+                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                                                    >
+                                                        <Settings size={16} className="text-muted-foreground" /> Settings
+                                                    </Link>
+                                                </div>
+
+                                                <div className="border-t border-border p-2">
+                                                    <button
+                                                        onClick={() => signOut({ callbackUrl: "/" })}
+                                                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-red-500 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer"
+                                                    >
+                                                        <LogOut size={16} /> Sign Out
+                                                    </button>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
                             ) : (
                                 <Link
                                     href="/login"

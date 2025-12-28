@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
-import { useSession } from "next-auth/react"; // Import Session
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -13,7 +13,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import TopBar from "@/components/layout/Topbar";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import LoginModal from "@/components/auth/LoginModal"; // Import the Modal
+import LoginModal from "@/components/auth/LoginModal";
 
 export default function CartPage() {
     const { items, removeFromCart, cartTotal } = useCart();
@@ -113,7 +113,7 @@ export default function CartPage() {
                                                 </div>
                                                 <button
                                                     onClick={() => removeFromCart(item.id)}
-                                                    className="text-xs font-bold text-muted-foreground hover:text-red-500 flex items-center justify-center sm:justify-start gap-1 transition-colors"
+                                                    className="text-xs font-bold cursor-pointer text-muted-foreground hover:text-red-500 flex items-center justify-center sm:justify-start gap-1 transition-colors"
                                                 >
                                                     <Trash2 size={14} /> Remove Item
                                                 </button>
@@ -155,7 +155,7 @@ export default function CartPage() {
                                     {/* UPDATED CHECKOUT BUTTON */}
                                     <button
                                         onClick={handleProceedToCheckout}
-                                        className="w-full py-4 bg-primary text-primary-foreground font-bold rounded-xl shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all flex items-center justify-center gap-2 mb-4"
+                                        className="w-full py-4 bg-primary cursor-pointer text-primary-foreground font-bold rounded-xl shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all flex items-center justify-center gap-2 mb-4"
                                     >
                                         Proceed to Checkout <ArrowRight size={18} />
                                     </button>

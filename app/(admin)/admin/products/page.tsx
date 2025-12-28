@@ -6,12 +6,10 @@ import ProductSearch from "@/components/admin/ProductSearch";
 import Pagination from "@/components/admin/Pagination";
 import DeleteProductButton from "@/components/admin/DeleteProductButton";
 
-// 1. Fetch Products with Search & Pagination Logic
 async function getProducts(query: string, page: number) {
-    const ITEMS_PER_PAGE = 5; // As requested
+    const ITEMS_PER_PAGE = 5;
     const skip = (page - 1) * ITEMS_PER_PAGE;
 
-    // Filter Logic
     const whereClause = query ? {
         OR: [
             { name: { contains: query } },
@@ -49,36 +47,41 @@ export default async function AdminProductsPage(props: {
     const { products, totalPages } = await getProducts(query, currentPage);
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-6 w-full">
 
             {/* Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
                 <div>
-                    <h1 className="text-3xl font-heading font-bold text-foreground">Products</h1>
-                    <p className="text-muted-foreground">Manage your digital assets catalog.</p>
+                    <h1 className="text-2xl sm:text-3xl font-heading font-bold text-foreground">Products</h1>
+                    <p className="text-sm text-muted-foreground">Manage your digital assets catalog.</p>
                 </div>
-                <Link href="/admin/upload" className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-bold shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all flex items-center gap-2 w-full md:w-auto justify-center">
+                <Link
+                    href="/admin/upload"
+                    className="w-full sm:w-auto bg-primary text-primary-foreground px-6 py-3 rounded-xl font-bold shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all flex items-center justify-center gap-2"
+                >
                     <Plus size={18} /> Upload New
                 </Link>
             </div>
 
             {/* Toolbar */}
-            <div className="bg-card border border-border p-4 rounded-xl flex flex-col md:flex-row gap-4 justify-between items-center shadow-sm">
-
-                {/* Search Component */}
-                <ProductSearch />
-
-                <div className="flex gap-2 w-full md:w-auto">
-                    <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-background border border-border rounded-lg text-sm font-bold text-muted-foreground hover:text-foreground transition-colors w-full md:w-auto">
+            <div className="bg-card border border-border p-4 rounded-xl flex flex-col sm:flex-row gap-4 justify-between items-center shadow-sm">
+                <div className="w-full sm:w-auto flex-1">
+                    <ProductSearch />
+                </div>
+                <div className="flex gap-2 w-full sm:w-auto">
+                    <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-background border border-border rounded-lg text-sm font-bold text-muted-foreground hover:text-foreground transition-colors w-full sm:w-auto">
                         <Filter size={16} /> Filter
                     </button>
                 </div>
             </div>
 
-            {/* Products Table */}
-            <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm">
+            {/* TABLE CONTAINER - FIXED SCROLLING */}
+            {/* max-w-[calc(100vw-48px)] ensures the card never exceeds screen width minus padding (mobile) */}
+            <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden w-full max-w-[calc(100vw-32px)] md:max-w-full mx-auto">
+
+                <div className="overflow-x-auto w-full">
+                    {/* min-w-[800px] forces the table to be wide, creating the scroll interaction INSIDE the div */}
+                    <table className="w-full text-left text-sm whitespace-nowrap min-w-[800px]">
                         <thead className="bg-secondary/50 border-b border-border text-muted-foreground uppercase text-xs font-bold tracking-wider">
                         <tr>
                             <th className="px-6 py-4">Product</th>
@@ -94,59 +97,28 @@ export default async function AdminProductsPage(props: {
                                 <tr key={product.id} className="group hover:bg-secondary/30 transition-colors">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-lg bg-muted border border-border overflow-hidden relative shrink-0">
+                                            <div className="w-10 h-10 rounded-lg bg-muted border border-border overflow-hidden relative shrink-0">
                                                 {product.imageUrl ? (
-                                                    <Image
-                                                        src={product.imageUrl}
-                                                        alt={product.name}
-                                                        fill
-                                                        className="object-cover"
-                                                    />
+                                                    <Image src={product.imageUrl} alt={product.name} fill className="object-cover" />
                                                 ) : (
-                                                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                                                        <Package size={20} />
-                                                    </div>
+                                                    <div className="w-full h-full flex items-center justify-center text-muted-foreground"><Package size={20} /></div>
                                                 )}
                                             </div>
-                                            <div>
-                                                <p className="font-bold text-foreground text-sm line-clamp-1">{product.name}</p>
+                                            <div className="max-w-[180px]">
+                                                <p className="font-bold text-foreground text-sm truncate" title={product.name}>{product.name}</p>
                                                 <p className="text-xs text-muted-foreground">{product.category}</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 font-bold text-foreground">
-                                        ${Number(product.price).toFixed(2)}
-                                    </td>
-                                    <td className="px-6 py-4 text-muted-foreground">
-                                        {product._count.orderItems} Sales
-                                    </td>
+                                    <td className="px-6 py-4 font-bold text-foreground">${Number(product.price).toFixed(2)}</td>
+                                    <td className="px-6 py-4 text-muted-foreground">{product._count.orderItems} Sales</td>
                                     <td className="px-6 py-4">
-                                            <span className="px-2.5 py-1 rounded-full text-xs font-bold border bg-green-500/10 text-green-600 border-green-500/20">
-                                                Active
-                                            </span>
+                                        <span className="px-2.5 py-1 rounded-full text-xs font-bold border bg-green-500/10 text-green-600 border-green-500/20">Active</span>
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex items-center justify-end gap-2">
-                                            {/* VIEW: Link to public product page */}
-                                            <Link
-                                                href={`/products/${product.id}`}
-                                                className="p-2 hover:bg-secondary rounded-lg text-muted-foreground hover:text-primary transition-colors"
-                                                title="View Public Page"
-                                                target="_blank"
-                                            >
-                                                <Eye size={18} />
-                                            </Link>
-
-                                            {/* EDIT: Link to upload page with ID param */}
-                                            <Link
-                                                href={`/admin/upload?edit=${product.id}`}
-                                                className="p-2 hover:bg-secondary rounded-lg text-muted-foreground hover:text-blue-500 transition-colors"
-                                                title="Edit"
-                                            >
-                                                <Edit size={18} />
-                                            </Link>
-
-                                            {/* DELETE: Client component */}
+                                            <Link href={`/products/${product.id}`} className="p-2 hover:bg-secondary rounded-lg text-muted-foreground hover:text-primary transition-colors" target="_blank"><Eye size={18} /></Link>
+                                            <Link href={`/admin/upload?edit=${product.id}`} className="p-2 hover:bg-secondary rounded-lg text-muted-foreground hover:text-blue-500 transition-colors"><Edit size={18} /></Link>
                                             <DeleteProductButton id={product.id} />
                                         </div>
                                     </td>
@@ -155,13 +127,7 @@ export default async function AdminProductsPage(props: {
                         ) : (
                             <tr>
                                 <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
-                                    <div className="flex flex-col items-center gap-3">
-                                        <Package size={40} className="opacity-20" />
-                                        <p>No products found matching &quot;{query}&quot;</p>
-                                        <Link href="/admin/upload" className="text-primary font-bold hover:underline text-sm">
-                                            Upload your first item
-                                        </Link>
-                                    </div>
+                                    No products found.
                                 </td>
                             </tr>
                         )}
@@ -170,9 +136,7 @@ export default async function AdminProductsPage(props: {
                 </div>
             </div>
 
-            {/* Pagination Controls */}
             {totalPages > 1 && <Pagination totalPages={totalPages} />}
-
         </div>
     );
 }

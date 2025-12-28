@@ -141,11 +141,11 @@ export default function CheckoutPage() {
                                     <div className="flex gap-4 border-b border-border pb-6 mb-6">
                                         <button
                                             onClick={() => setPaymentMethod("card")}
-                                            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-bold border transition-all ${paymentMethod === "card" ? "bg-primary/5 border-primary text-primary" : "bg-background border-border text-muted-foreground hover:border-primary/50"}`}
+                                            className={`flex-1 flex items-center justify-center cursor-pointer gap-2 py-3 rounded-lg text-sm font-bold border transition-all ${paymentMethod === "card" ? "bg-primary/5 border-primary text-primary" : "bg-background border-border text-muted-foreground hover:border-primary/50"}`}
                                         >
                                             <CreditCard size={18} /> Card
                                         </button>
-                                        <button disabled className="flex-1 flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-bold border bg-muted text-muted-foreground cursor-not-allowed opacity-50">
+                                        <button disabled className="flex-1 flex items-center cursor-pointer justify-center gap-2 py-3 rounded-lg text-sm font-bold border bg-muted text-muted-foreground cursor-not-allowed opacity-50">
                                             <Wallet size={18} /> PayPal (Soon)
                                         </button>
                                     </div>
@@ -201,7 +201,7 @@ export default function CheckoutPage() {
                                         placeholder="Promo Code"
                                         className="flex-1 bg-background border border-border rounded-lg px-4 py-2 text-sm text-foreground outline-none focus:border-primary transition-all"
                                     />
-                                    <button className="px-4 py-2 bg-secondary border border-border rounded-lg text-sm font-bold text-muted-foreground hover:text-foreground hover:bg-border transition-all">
+                                    <button className="px-4 py-2 bg-secondary cursor-pointer border border-border rounded-lg text-sm font-bold text-muted-foreground hover:text-foreground hover:bg-border transition-all">
                                         Apply
                                     </button>
                                 </div>
@@ -231,7 +231,7 @@ export default function CheckoutPage() {
                                 <button
                                     onClick={handleCheckout}
                                     disabled={isPending || items.length === 0}
-                                    className="w-full py-4 bg-primary text-primary-foreground font-bold rounded-xl shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all flex items-center justify-center gap-2 mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full py-4 bg-primary cursor-pointer text-primary-foreground font-bold rounded-xl shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all flex items-center justify-center gap-2 mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isPending ? <Loader2 className="animate-spin" /> : <Lock size={18} />}
                                     {isPending ? "Processing..." : `Pay $${totalAmount.toFixed(2)}`}
