@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Upload, ShoppingCart, Package, DollarSign, MessageSquare, User, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, Upload, ShoppingCart, Package, DollarSign, BookOpen, MessageSquare, User, LogOut, Menu, X } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 const menuItems = [
@@ -14,6 +14,7 @@ const menuItems = [
     { name: "Revenue", icon: DollarSign, href: "/admin/revenue" },
     { name: "Comments", icon: MessageSquare, href: "/admin/comments" },
     { name: "Users", icon: User, href: "/admin/users" },
+    { name: "Insights", icon: BookOpen, href: "/admin/insights" }
 ];
 
 export default function AdminSidebar() {
