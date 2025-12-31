@@ -160,7 +160,7 @@ export default function AdminUsersClient({ users }: { users: UserType[] }) {
                                             <button
                                                 onClick={() => handleRoleChange(user.id, user.role)}
                                                 disabled={!!isLoading}
-                                                className="p-2 hover:bg-primary/10 text-muted-foreground hover:text-primary rounded-lg transition-colors"
+                                                className="p-2 hover:bg-primary/10 text-muted-foreground cursor-pointer hover:text-primary rounded-lg transition-colors"
                                                 title={user.role === "ADMIN" ? "Demote to User" : "Promote to Admin"}
                                             >
                                                 {isLoading === user.id ? <Loader2 size={16} className="animate-spin" /> : <Shield size={16} />}
@@ -168,7 +168,7 @@ export default function AdminUsersClient({ users }: { users: UserType[] }) {
                                             <button
                                                 onClick={() => handleDelete(user.id)}
                                                 disabled={!!isLoading}
-                                                className="p-2 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 rounded-lg transition-colors"
+                                                className="p-2 hover:bg-red-500/10 text-muted-foreground cursor-pointer hover:text-red-500 rounded-lg transition-colors"
                                                 title="Delete User"
                                             >
                                                 {isLoading === user.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}

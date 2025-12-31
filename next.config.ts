@@ -19,7 +19,7 @@ const nextConfig: NextConfig = {
             },
             {
                 protocol: "https",
-                hostname: "**.ufs.sh", // NEW UploadThing domain structure (Fixes your 500 error)
+                hostname: "**.ufs.sh", // NEW UploadThing domain structure
                 pathname: "/**"
             },
             {
@@ -36,16 +36,15 @@ const nextConfig: NextConfig = {
                 protocol: "https",
                 hostname: "images.unsplash.com", // Unsplash (Mock Data Images)
                 pathname: "/**"
+            },
+            // FIX: Allow UI Avatars domain
+            {
+                protocol: "https",
+                hostname: "ui-avatars.com",
+                pathname: "/**"
             }
         ],
     },
-
-    // 4. Increase timeout for heavy server actions (like large uploads) if needed
-    // experimental: {
-    //    serverActions: {
-    //        bodySizeLimit: '10mb',
-    //    },
-    // },
 };
 
 export default nextConfig;

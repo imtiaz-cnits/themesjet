@@ -21,31 +21,32 @@ model User {
   name          String?
   email         String    @unique
   emailVerified DateTime?
-  password      String?   // Hashed password (optional if using Google login only)
+  password      String? // Hashed password (optional if using Google login only)
   image         String?
   role          Role      @default(USER)
 
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  orders        Order[]
-  accounts      Account[]
+  orders   Order[]
+  accounts Account[]
+  reviews  Review[]
 }
 
 // Required for NextAuth (Social Login like Google/GitHub)
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String? @db.Text // Use Text for long tokens in MySQL
-  access_token       String? @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String? @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text // Use Text for long tokens in MySQL
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -56,69 +57,86 @@ model Account {
 // --- E-COMMERCE MODELS ---
 
 model Product {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   name        String
-  description String   @db.Text // Allows long text > 191 chars
-  price       Decimal  @db.Decimal(10, 2) // Precision money handling
+  description String  @db.Text // Allows long text > 191 chars
+  price       Decimal @db.Decimal(10, 2) // Precision money handling
 
   // Assets
-  imageUrl    String   @db.Text
-  fileUrl     String   @db.Text // The secure link to the zip file
-  version     String?
-  framework   String?  // e.g. "React", "Next.js"
+  imageUrl  String  @db.Text
+  fileUrl   String  @db.Text // The secure link to the zip file
+  version   String?
+  framework String? // e.g. "React", "Next.js"
 
   // Metadata
-  category    String
-  tags        Json?    // Stores array like ["Admin", "Dark Mode"]
+  category String
+  tags     Json? // Stores array like ["Admin", "Dark Mode"]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  orderItems  OrderItem[]
+  orderItems OrderItem[]
+  reviews    Review[]
 }
 
 model Order {
-  id        String      @id @default(cuid())
-  userId    String
-  user      User        @relation(fields: [userId], references: [id])
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 
-  total     Decimal     @db.Decimal(10, 2)
-  status    String      @default("PENDING") // PENDING, COMPLETED, FAILED
-  stripeId  String?     // Payment Intent ID from Stripe
+  total    Decimal @db.Decimal(10, 2)
+  status   String  @default("PENDING") // PENDING, COMPLETED, FAILED
+  stripeId String? // Payment Intent ID from Stripe
 
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  items     OrderItem[]
+  items OrderItem[]
 
   @@index([userId])
 }
 
 model OrderItem {
-  id        String  @id @default(cuid())
-  orderId   String
-  order     Order   @relation(fields: [orderId], references: [id])
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
 
   productId String
   product   Product @relation(fields: [productId], references: [id])
 
-  price     Decimal @db.Decimal(10, 2) // Price locked at time of purchase
+  price Decimal @db.Decimal(10, 2) // Price locked at time of purchase
 
   @@index([orderId])
   @@index([productId])
 }
 
 model Post {
-  id          String   @id @default(cuid())
-  slug        String   @unique
-  title       String
-  excerpt     String   @db.Text // Allows longer text
-  content     String   @db.Text // Full HTML/Markdown content
-  coverImage  String
-  category    String
-  author      String
-  readTime    String
-  published   Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(cuid())
+  slug       String   @unique
+  title      String
+  excerpt    String   @db.Text // Allows longer text
+  content    String   @db.Text // Full HTML/Markdown content
+  coverImage String
+  category   String
+  author     String
+  readTime   String
+  published  Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  rating     Int // 1 to 5
+  comment    String   @db.Text
+  isFeatured Boolean  @default(false)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([productId])
+  @@index([userId])
 }

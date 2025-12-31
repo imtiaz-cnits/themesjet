@@ -146,7 +146,7 @@ export default function AdminOrdersClient({ initialOrders }: { initialOrders: Or
                                         <button
                                             onClick={() => handleDownloadInvoice(order)}
                                             disabled={downloadingId === order.id}
-                                            className="p-2 hover:bg-muted rounded-lg text-muted-foreground hover:text-primary transition-colors disabled:opacity-50"
+                                            className="p-2 hover:bg-muted rounded-lg text-muted-foreground cursor-pointer hover:text-primary transition-colors disabled:opacity-50"
                                             title="Download Invoice"
                                         >
                                             {downloadingId === order.id ? (

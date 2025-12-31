@@ -1,10 +1,7 @@
-"use client";
-
-import {useEffect, useState} from "react";
 import TopBar from "@/components/layout/Topbar";
 import Navbar from "@/components/layout/Navbar";
-import {AnimatePresence, motion} from "framer-motion";
-import {Search, ShieldCheck, TrendingUp, Zap} from "lucide-react";
+import { Search, ShieldCheck, TrendingUp, Zap } from "lucide-react";
+import HeroSection from "@/components/sections/home/HeroSection";
 import PopularProducts from "@/components/sections/home/PopularProducts";
 import BrowseCategories from "@/components/sections/home/BrowseCategories";
 import ServiceSection from "@/components/sections/home/ServiceSection";
@@ -14,21 +11,32 @@ import FreshFromLab from "@/components/sections/home/FreshFromLab";
 import Testimonials from "@/components/sections/home/Testimonials";
 import ThemeStoreCTA from "@/components/sections/home/ThemeStoreCTA";
 import Footer from "@/components/layout/Footer";
+import { getPopularProducts, getLatestProducts } from "@/actions/product";
+import { getFeaturedReviews } from "@/actions/review";
 
-// Rotating words list
-const words = ["Choose Better.", "Scale Faster.", "Hassle Free."];
+// Set Revalidation (Optional: updates cache every hour)
+export const revalidate = 3600;
 
-export default function Home() {
+export default async function Home() {
+    // 1. Fetch Data Parallelly for performance
+    const [rawPopular, rawLatest, featuredReviews] = await Promise.all([
+        getPopularProducts(),
+        getLatestProducts(),
+        getFeaturedReviews()
+    ]);
 
-    // State for text rotation
-    const [index, setIndex] = useState(0);
+    // 2. Data Transformation (Decimal -> Number)
+    const popularProducts = rawPopular.map((product) => ({
+        ...product,
+        price: Number(product.price),
+        tags: product.tags ? String(product.tags) : "",
+    }));
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setIndex((prevIndex) => (prevIndex + 1) % words.length);
-        }, 3000); // Change word every 3 seconds
-        return () => clearInterval(interval);
-    }, []);
+    const latestProducts = rawLatest.map((product) => ({
+        ...product,
+        price: Number(product.price),
+        tags: product.tags ? String(product.tags) : "",
+    }));
 
     return (
         <main className="min-h-screen bg-background text-foreground font-body selection:bg-primary/30 overflow-x-hidden transition-colors duration-300">
@@ -38,200 +46,7 @@ export default function Home() {
             <Navbar />
 
             {/* 2. HERO SECTION */}
-            <section className="relative pt-30 pb-16 lg:pt-52 lg:pb-40 overflow-visible">
-
-                {/* GLOBAL BACKGROUND BLOBS */}
-                <div className="fixed inset-0 z-0 pointer-events-none">
-                    <div className="absolute top-[-10%] left-[-10%] w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen" />
-                    <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-purple-600/10 rounded-full blur-[120px] mix-blend-multiply dark:mix-blend-screen" />
-                </div>
-
-                <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10">
-
-                    {/* LEFT: Text Content */}
-                    <div className="text-left relative z-20">
-                        {/* Badge */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-wider mb-8"
-                        >
-                            <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                            Live v1.0
-                        </motion.div>
-
-                        {/* Headline */}
-                        <div className="font-heading font-extrabold text-5xl md:text-7xl leading-[1.1] mb-6 text-foreground">
-                            <motion.span
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.1 }}
-                            >
-                                Build Faster.<br />
-                            </motion.span>
-
-                            {/* --- SMOOTH TEXT SPINNING ANIMATION START --- */}
-                            <div className="h-[1.1em] overflow-hidden flex items-center">
-                                <AnimatePresence mode="wait">
-                                    <motion.span
-                                        key={index}
-                                        initial={{ y: 40, opacity: 0, rotateX: -90 }}
-                                        animate={{ y: 0, opacity: 1, rotateX: 0 }}
-                                        exit={{ y: -40, opacity: 0, rotateX: 90 }}
-                                        transition={{ duration: 0.5, ease: "easeInOut" }}
-                                        className="block text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500 text-glow"
-                                    >
-                                        {words[index]}
-                                    </motion.span>
-                                </AnimatePresence>
-                            </div>
-                            {/* --- SMOOTH TEXT SPINNING ANIMATION END --- */}
-                        </div>
-
-                        {/* Subtext */}
-                        <motion.p
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 }}
-                            className="text-lg text-muted-foreground mb-10 max-w-lg leading-relaxed font-body"
-                        >
-                            The premium marketplace for elite developers. Discover high-performance <span className="text-foreground font-semibold">HTML, React, & PHP</span> assets curated for scale.
-                        </motion.p>
-
-                        {/* Search Bar */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
-                            className="bg-card/80 border border-border p-1.5 rounded-2xl flex flex-col sm:flex-row gap-2 max-w-lg dark:shadow-black/50 backdrop-blur-sm relative z-20"
-                        >
-                            <div className="flex-1 flex items-center px-4 h-12">
-                                <Search className="w-5 h-5 text-muted-foreground mr-3" />
-                                <input
-                                    type="text"
-                                    placeholder="e.g. SaaS Dashboard, Crypto..."
-                                    className="bg-transparent border-none outline-none text-foreground placeholder-muted-foreground w-full font-medium font-body text-sm"
-                                />
-                            </div>
-                            <button className="h-12 px-6 rounded-xl bg-primary text-primary-foreground font-bold hover:opacity-90 transition-all shadow-lg shadow-primary/25 flex items-center justify-center gap-2 group font-heading text-sm">
-                                Explore
-                                <span className="group-hover:translate-x-1 transition-transform">→</span>
-                            </button>
-                        </motion.div>
-
-                        {/* Trust Tags */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.5 }}
-                            className="mt-8 flex items-center gap-6 text-sm text-muted-foreground font-medium"
-                        >
-                            <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-green-500" /> Verified Code</span>
-                            <span className="flex items-center gap-2"><Zap className="w-4 h-4 text-green-500" /> Instant Download</span>
-                        </motion.div>
-                    </div>
-
-                    {/* RIGHT: 3D Visuals */}
-                    <div className="relative hidden lg:block h-[600px] w-full perspective-[2000px]">
-
-                        {/* AMBIENT GLOW ANIMATION LAYER */}
-                        <motion.div
-                            animate={{
-                                scale: [1, 1.4, 1],
-                                opacity: [0.5, 0.7, 0.5],
-                                rotate: [0, 10, 0]
-                            }}
-                            transition={{
-                                duration: 8,
-                                repeat: Infinity,
-                                ease: "easeInOut"
-                            }}
-                            className="absolute top-10 right-10 w-[450px] h-[550px] bg-gradient-to-tr from-primary/40 via-purple-600/40 to-blue-400/40 rounded-full blur-[100px] -z-10"
-                        />
-
-                        {/* Main Card (Back Layer) */}
-                        <motion.div
-                            initial={{ opacity: 0, rotateY: 10, rotateX: 5 }}
-                            animate={{ opacity: 1, y: [0, -15, 0] }}
-                            transition={{
-                                opacity: { duration: 0.8 },
-                                y: { duration: 6, repeat: Infinity, ease: "easeInOut" }
-                            }}
-                            className="absolute top-10 right-10 w-[420px] h-[520px] bg-card/80 backdrop-blur-xl border border-border rounded-2xl shadow-2xl p-6 rotate-3 z-10 ring-1 ring-border"
-                        >
-                            {/* Mock UI Header */}
-                            <div className="flex gap-2 mb-6 border-b border-border pb-4">
-                                <div className="w-3 h-3 rounded-full bg-red-500/20"></div>
-                                <div className="w-3 h-3 rounded-full bg-yellow-500/20"></div>
-                                <div className="w-3 h-3 rounded-full bg-green-500/20"></div>
-                            </div>
-                            {/* Mock Content */}
-                            <div className="space-y-4">
-                                <div className="h-40 w-full bg-muted/50 rounded-xl border border-dashed border-border flex items-center justify-center">
-                                    <span className="text-xs text-muted-foreground font-mono">Chart Visualization</span>
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="h-24 bg-primary/10 rounded-xl border border-primary/20 relative overflow-hidden">
-                                        <div className="absolute inset-0 bg-primary/20 blur-lg animate-pulse"></div>
-                                    </div>
-                                    <div className="h-24 bg-muted/50 rounded-xl"></div>
-                                </div>
-                                <div className="h-4 w-3/4 bg-muted/50 rounded"></div>
-                                <div className="h-4 w-1/2 bg-muted/50 rounded"></div>
-                            </div>
-                        </motion.div>
-
-                        {/* Floating Info Card (Front Layer) */}
-                        <motion.div
-                            initial={{ opacity: 0, x: -50 }}
-                            animate={{ opacity: 1, x: 0, y: [0, 20, 0] }}
-                            transition={{
-                                opacity: { delay: 0.3 },
-                                y: { duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }
-                            }}
-                            className="absolute bottom-20 left-0 w-[280px] bg-card/95 backdrop-blur-md border border-border rounded-2xl p-5 shadow-2xl z-20 -rotate-2 ring-1 ring-border"
-                        >
-                            <div className="flex items-center gap-4 mb-4">
-                                <div className="p-3 bg-green-500/10 rounded-xl text-green-500 border border-green-500/20">
-                                    <ShieldCheck size={24} />
-                                </div>
-                                <div>
-                                    <div className="text-base font-bold text-foreground font-heading">Verified Code</div>
-                                    <div className="text-xs text-muted-foreground">100% Bug Free & Tested</div>
-                                </div>
-                            </div>
-                            <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-                                <motion.div
-                                    initial={{ width: 0 }}
-                                    animate={{ width: "92%" }}
-                                    transition={{ delay: 1, duration: 1.5, ease: "easeOut" }}
-                                    className="h-full bg-green-500 rounded-full shadow-[0_0_10px_rgba(34,197,94,0.5)]"
-                                />
-                            </div>
-                        </motion.div>
-
-                        {/* Floating Badge (Top Right) */}
-                        <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: [1, 1.05, 1] }}
-                            transition={{
-                                scale: { duration: 0.5 },
-                                default: { duration: 4, repeat: Infinity }
-                            }}
-                            className="absolute top-0 right-20 bg-card border border-border p-3 pr-6 rounded-2xl shadow-xl z-30 flex items-center gap-4 animate-float"
-                        >
-                            <div className="w-12 h-12 bg-gradient-to-br from-primary to-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/30">
-                                <TrendingUp size={24} />
-                            </div>
-                            <div>
-                                <div className="text-xs text-muted-foreground font-medium">Trending</div>
-                                <div className="font-bold text-foreground text-lg font-heading">React Templates</div>
-                            </div>
-                        </motion.div>
-
-                    </div>
-                </div>
-            </section>
+            <HeroSection />
 
             {/* STATS STRIP */}
             <div className="border-y mb-10 border-border bg-card/30 backdrop-blur-md relative z-10">
@@ -261,28 +76,14 @@ export default function Home() {
                 </div>
             </div>
 
-            {/* POPULAR PRODUCTS SECTION */}
-            <PopularProducts />
-
-            {/* CATEGORIES SECTION */}
+            {/* 3. POPULAR PRODUCTS SECTION */}
+            <PopularProducts products={popularProducts} />
             <BrowseCategories />
-
-            {/*SERVICE SECTION*/}
             <ServiceSection />
-
-            {/*ADVANTAGES SECTION*/}
             <Advantages />
-
-            {/*ECOSYSTEM SECTION - COMING SOON*/}
             <WordPressEcosystem />
-
-            {/* FRESH FROM LAB SECTION */}
-            <FreshFromLab />
-
-            {/* TESTIMONIALS SECTION */}
-            <Testimonials />
-
-            {/*THEME STORE CTA*/}
+            <FreshFromLab products={latestProducts} />
+            <Testimonials reviews={featuredReviews} />
             <ThemeStoreCTA />
 
             <Footer />

@@ -100,13 +100,13 @@ export default function ProductForm({ initialData }: { initialData?: ProductData
                     </p>
                 </div>
                 <div className="flex gap-3 w-full md:w-auto">
-                    <button type="button" onClick={() => router.back()} className="flex-1 md:flex-none px-6 py-3 rounded-xl border border-border text-sm font-bold text-foreground hover:bg-secondary transition-colors">
+                    <button type="button" onClick={() => router.back()} className="flex-1 md:flex-none cursor-pointer px-6 py-3 rounded-xl border border-border text-sm font-bold text-foreground hover:bg-secondary transition-colors">
                         Cancel
                     </button>
                     <button
                         type="submit"
                         disabled={isPending}
-                        className="flex-1 md:flex-none px-6 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-bold hover:bg-primary/90 shadow-lg shadow-primary/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                        className="flex-1 md:flex-none px-6 py-3 rounded-xl bg-primary text-primary-foreground cursor-pointer text-sm font-bold hover:bg-primary/90 shadow-lg shadow-primary/25 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                     >
                         {isPending ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
                         {isEditMode ? "Save Changes" : "Publish Item"}
@@ -174,7 +174,7 @@ export default function ProductForm({ initialData }: { initialData?: ProductData
                             <div>
                                 <label className="label-text mb-2 block">Thumbnail</label>
                                 {imageUrl ? (
-                                    <div className="relative w-full h-64 rounded-xl overflow-hidden border border-border bg-muted">
+                                    <div className="relative w-full h-64 rounded-xl cursor-pointer overflow-hidden border border-border bg-muted">
                                         <Image src={imageUrl} alt="Preview" fill className="object-cover" />
                                         <button type="button" onClick={() => setImageUrl("")} className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-lg"><X size={16}/></button>
                                     </div>

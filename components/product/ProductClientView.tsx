@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Star, Check, FileText, Code, ShoppingCart, Heart, ShieldCheck, Zap, Globe, Eye } from "lucide-react";
+import { Star, Check, ShieldCheck, Zap, Globe, Eye, LifeBuoy, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
 import { format } from "date-fns";
-import { useRouter } from "next/navigation"; // 1. Import Router
-import { useCart } from "@/context/CartContext"; // 2. Import Cart Hook
+import { useRouter } from "next/navigation";
+import { useCart } from "@/context/CartContext";
 import AddToCartButton from "./AddToCartButton";
+import ReviewForm from "@/components/reviews/ReviewForm";
 
 interface ProductProps {
     id: string;
@@ -22,16 +23,22 @@ interface ProductProps {
     createdAt: Date;
     updatedAt: Date;
     salesCount: number;
+    averageRating: number; // Added
+    totalReviews: number;  // Added
 }
 
-export default function ProductClientView({ product }: { product: ProductProps }) {
-    const [activeTab, setActiveTab] = useState("details");
-    const router = useRouter(); // Initialize router
-    const { addToCart } = useCart(); // Get cart action
+interface ClientViewProps {
+    product: ProductProps;
+    reviewsComponent: React.ReactNode;
+}
 
-    // 3. Handle Buy Now Logic
+export default function ProductClientView({ product, reviewsComponent }: ClientViewProps) {
+    const [activeTab, setActiveTab] = useState("details");
+    const router = useRouter();
+    const { addToCart } = useCart();
+
+    // Handle Buy Now Logic
     const handleBuyNow = () => {
-        // Add item to cart state
         addToCart({
             id: product.id,
             name: product.name,
@@ -39,8 +46,6 @@ export default function ProductClientView({ product }: { product: ProductProps }
             image: product.imageUrl,
             category: product.category,
         });
-
-        // Redirect immediately to checkout
         router.push("/checkout");
     };
 
@@ -53,10 +58,25 @@ export default function ProductClientView({ product }: { product: ProductProps }
                     <div className="mb-8">
                         <h1 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-4 leading-tight">{product.name}</h1>
                         <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+
+                            {/* DYNAMIC STAR RATING */}
                             <div className="flex items-center text-amber-500 font-bold">
-                                <div className="flex mr-1">{[...Array(5)].map((_, i) => (<Star key={i} size={14} fill="currentColor" />))}</div>
-                                <span className="text-muted-foreground font-normal">(5.0 Reviews)</span>
+                                <div className="flex mr-1">
+                                    {[...Array(5)].map((_, i) => (
+                                        <Star
+                                            key={i}
+                                            size={14}
+                                            // Fill logic: if index is less than rounded average, fill it.
+                                            fill={i < Math.round(product.averageRating) ? "currentColor" : "none"}
+                                            className={i >= Math.round(product.averageRating) ? "text-muted-foreground/30" : ""}
+                                        />
+                                    ))}
+                                </div>
+                                <span className="text-muted-foreground font-normal">
+                                    ({product.averageRating.toFixed(1)} / {product.totalReviews} Reviews)
+                                </span>
                             </div>
+
                             <div className="w-1 h-1 rounded-full bg-border"></div>
                             <div><span className="text-foreground font-bold">{product.salesCount}</span> Sales</div>
                             <div className="w-1 h-1 rounded-full bg-border"></div>
@@ -73,17 +93,117 @@ export default function ProductClientView({ product }: { product: ProductProps }
                         </div>
                     </div>
 
-                    {/* Tabs and Description */}
+                    {/* Tabs Navigation */}
                     <div className="border-b border-border mb-8">
                         <nav className="flex gap-8">
                             {['details', 'reviews', 'support'].map((tab) => (
-                                <button key={tab} onClick={() => setActiveTab(tab)} className={`pb-4 border-b-2 font-medium text-sm capitalize transition-colors ${activeTab === tab ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"}`}>{tab === 'details' ? 'Item Details' : tab}</button>
+                                <button
+                                    key={tab}
+                                    onClick={() => setActiveTab(tab)}
+                                    className={`pb-4 border-b-2 font-medium text-sm cursor-pointer capitalize transition-colors ${
+                                        activeTab === tab
+                                            ? "border-primary text-foreground"
+                                            : "border-transparent text-muted-foreground hover:text-foreground"
+                                    }`}
+                                >
+                                    {tab === 'details' ? 'Item Details' : tab}
+                                </button>
                             ))}
                         </nav>
                     </div>
 
-                    <div className="prose prose-neutral dark:prose-invert max-w-none text-muted-foreground">
-                        <p className="mb-6 text-lg leading-relaxed whitespace-pre-wrap">{product.description}</p>
+                    {/* --- TAB CONTENT AREA --- */}
+                    <div className="min-h-[300px]">
+
+                        {/* 1. DETAILS TAB */}
+                        {activeTab === 'details' && (
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                            >
+                                <div className="prose prose-neutral dark:prose-invert max-w-none text-muted-foreground mb-16">
+                                    <p className="text-lg leading-relaxed whitespace-pre-wrap">{product.description}</p>
+                                </div>
+
+                                {/* Divider */}
+                                <div className="h-px bg-border my-12" />
+
+                                {/* REVIEW FORM at the bottom of Description */}
+                                <div>
+                                    <h3 className="text-xl font-heading font-bold text-foreground mb-6">Leave a Review</h3>
+                                    <ReviewForm productId={product.id} />
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {/* 2. REVIEWS TAB */}
+                        {activeTab === 'reviews' && (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                {reviewsComponent}
+                            </motion.div>
+                        )}
+
+                        {/* 3. SUPPORT TAB */}
+                        {activeTab === 'support' && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="space-y-8"
+                            >
+                                <div className="bg-card border border-border rounded-2xl p-8">
+                                    <h3 className="text-xl font-heading font-bold text-foreground mb-4">Item Support Policy</h3>
+                                    <p className="text-muted-foreground leading-relaxed mb-6">
+                                        We are committed to providing excellent support to ensure your success with our templates.
+                                        Our standard support includes:
+                                    </p>
+                                    <ul className="space-y-3 mb-8">
+                                        <li className="flex items-start gap-3 text-sm text-muted-foreground">
+                                            <div className="mt-0.5 p-1 bg-green-500/10 rounded-full text-green-500">
+                                                <Check className="w-3 h-3" />
+                                            </div>
+                                            <span>Availability to answer questions</span>
+                                        </li>
+                                        <li className="flex items-start gap-3 text-sm text-muted-foreground">
+                                            <div className="mt-0.5 p-1 bg-green-500/10 rounded-full text-green-500">
+                                                <Check className="w-3 h-3" />
+                                            </div>
+                                            <span>Assistance with reported bugs and issues</span>
+                                        </li>
+                                        <li className="flex items-start gap-3 text-sm text-muted-foreground">
+                                            <div className="mt-0.5 p-1 bg-green-500/10 rounded-full text-green-500">
+                                                <Check className="w-3 h-3" />
+                                            </div>
+                                            <span>Help with included 3rd party assets</span>
+                                        </li>
+                                    </ul>
+
+                                    <div className="flex flex-col sm:flex-row gap-4">
+                                        <button className="flex items-center cursor-pointer justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl text-sm hover:bg-primary/90 transition-colors">
+                                            <LifeBuoy size={18} />
+                                            Contact Support
+                                        </button>
+                                        <button className="flex items-center cursor-pointer justify-center gap-2 px-6 py-3 border border-border text-foreground font-bold rounded-xl text-sm hover:bg-secondary transition-colors">
+                                            <BookOpen size={18} />
+                                            View Documentation
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="p-6 bg-blue-500/5 border border-blue-500/20 rounded-2xl flex gap-4">
+                                    <div className="shrink-0">
+                                        <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
+                                            <Zap size={20} />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-foreground text-sm mb-1">Response Time</h4>
+                                        <p className="text-xs text-muted-foreground leading-relaxed">
+                                            Our team usually responds within 24 hours (Monday to Friday). We do our best to get back to you as soon as possible.
+                                        </p>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
                     </div>
                 </div>
 

@@ -12,7 +12,7 @@ const menuItems = [
     { name: "Upload Item", icon: Upload, href: "/admin/upload" },
     { name: "Orders", icon: ShoppingCart, href: "/admin/orders" },
     { name: "Revenue", icon: DollarSign, href: "/admin/revenue" },
-    { name: "Comments", icon: MessageSquare, href: "/admin/comments" },
+    { name: "Reviews", icon: MessageSquare, href: "/admin/reviews" },
     { name: "Users", icon: User, href: "/admin/users" },
     { name: "Insights", icon: BookOpen, href: "/admin/insights" }
 ];

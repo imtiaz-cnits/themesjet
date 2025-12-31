@@ -2,25 +2,29 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import ProductClientView from "@/components/product/ProductClientView"; // Import the client view
+import ProductClientView from "@/components/product/ProductClientView";
+import ProductReviews from "@/components/reviews/ProductReviews"; // List Only
+import ReviewForm from "@/components/reviews/ReviewForm"; // Import Form
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import TopBar from "@/components/layout/Topbar";
 
-// Define the params type for Next.js 15+
 interface PageProps {
     params: Promise<{ id: string }>;
 }
 
 export default async function ProductDetailsPage(props: PageProps) {
-    const params = await props.params; // Await params in Next.js 15
+    const params = await props.params;
 
-    // 1. Fetch Product with Sales Count
+    // 1. Fetch Product with Sales Count AND Reviews
     const product = await prisma.product.findUnique({
         where: { id: params.id },
         include: {
             _count: {
-                select: { orderItems: true } // Mock sales count
+                select: { orderItems: true }
+            },
+            reviews: {
+                select: { rating: true } // Fetch only ratings to calculate average
             }
         }
     });
@@ -29,7 +33,12 @@ export default async function ProductDetailsPage(props: PageProps) {
         notFound();
     }
 
-    // 2. Fetch Related Products (Same category, excluding current)
+    // 2. Calculate Average Rating
+    const totalReviews = product.reviews.length;
+    const totalRating = product.reviews.reduce((acc, r) => acc + r.rating, 0);
+    const averageRating = totalReviews > 0 ? totalRating / totalReviews : 0;
+
+    // 3. Fetch Related Products
     const relatedProducts = await prisma.product.findMany({
         where: {
             category: product.category,
@@ -39,12 +48,13 @@ export default async function ProductDetailsPage(props: PageProps) {
         orderBy: { createdAt: "desc" }
     });
 
-    // 3. Format data for the client component
+    // 4. Format data
     const formattedProduct = {
         ...product,
-        price: Number(product.price), // Convert Decimal to Number
+        price: Number(product.price),
         salesCount: product._count.orderItems,
-        // Ensure tags is a string array (Prisma might return JSON)
+        averageRating: averageRating, // Pass calculated rating
+        totalReviews: totalReviews,   // Pass total count
         tags: Array.isArray(product.tags) ? product.tags as string[] : []
     };
 
@@ -53,7 +63,7 @@ export default async function ProductDetailsPage(props: PageProps) {
             <TopBar />
             <Navbar />
 
-            {/* --- BREADCRUMB --- */}
+            {/* Breadcrumb */}
             <div className="border-b border-border bg-card/30 pt-32 pb-4">
                 <div className="max-w-7xl mx-auto px-6 text-xs font-medium text-muted-foreground flex gap-2">
                     <Link href="/" className="hover:text-foreground transition-colors">Home</Link> /
@@ -62,10 +72,13 @@ export default async function ProductDetailsPage(props: PageProps) {
                 </div>
             </div>
 
-            {/* --- CLIENT UI (Tabs & Interactions) --- */}
-            <ProductClientView product={formattedProduct} />
+            {/* Client UI */}
+            <ProductClientView
+                product={formattedProduct}
+                reviewsComponent={<ProductReviews productId={product.id} />}
+            />
 
-            {/* --- RELATED PRODUCTS SECTION (Server Side Rendered) --- */}
+            {/* Related Products */}
             {relatedProducts.length > 0 && (
                 <section className="border-t border-border bg-secondary/30 py-16">
                     <div className="max-w-7xl mx-auto px-6">
