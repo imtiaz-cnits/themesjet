@@ -1,16 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Download, User, Settings, LogOut, ShoppingBag, FileText, Heart, CreditCard, Loader2, Bell, ShieldCheck } from "lucide-react";
+import { Download, User, Settings, LogOut, ShoppingBag, FileText, Heart, CreditCard, Loader2, Bell, ShieldCheck, Star, MessageSquare, X, Send } from "lucide-react";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { format } from "date-fns";
 import Image from "next/image";
 import { UploadButton } from "@/lib/uploadthing";
 import { toast } from "sonner";
-import { useRouter, useSearchParams } from "next/navigation"; // Added useSearchParams
+import { useRouter, useSearchParams } from "next/navigation";
 import { updateUserProfile } from "@/actions/user";
+import { createReview } from "@/actions/review";
 
 // Layout Imports
 import TopBar from "@/components/layout/Topbar";
@@ -28,35 +30,37 @@ interface DashboardProps {
         productsOwned: number;
     };
     purchases: any[];
+    reviews: any[];
 }
 
-export default function UserDashboardClient({ user, stats, purchases }: DashboardProps) {
+export default function UserDashboardClient({ user, stats, purchases, reviews }: DashboardProps) {
     const { data: session, update } = useSession();
     const router = useRouter();
-    const searchParams = useSearchParams(); // Hook to get query params
+    const searchParams = useSearchParams();
 
-    // Initialize activeTab based on URL query param 'tab'
     const initialTab = searchParams.get("tab") || "overview";
     const [activeTab, setActiveTab] = useState(initialTab);
-
     const [isSigningOut, setIsSigningOut] = useState(false);
 
-    // Settings State
+    // Review Modal State
+    const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+    const [reviewProduct, setReviewProduct] = useState<{ id: string, name: string, image: string } | null>(null);
+    const [rating, setRating] = useState(0);
+    const [comment, setComment] = useState("");
+    const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+
+    // Settings State (Restored)
     const [firstName, setFirstName] = useState(user.name?.split(" ")[0] || "");
     const [lastName, setLastName] = useState(user.name?.split(" ").slice(1).join(" ") || "");
     const [emailNotifications, setEmailNotifications] = useState(true);
     const [avatarUrl, setAvatarUrl] = useState(user.image || "");
     const [isSaving, setIsSaving] = useState(false);
 
-    // Effect to update activeTab when URL changes (e.g. navigation via Navbar)
     useEffect(() => {
         const tab = searchParams.get("tab");
-        if (tab && ["overview", "downloads", "settings"].includes(tab)) {
-            setActiveTab(tab);
-        }
+        if (tab) setActiveTab(tab);
     }, [searchParams]);
 
-    // Sync state if session updates externally
     useEffect(() => {
         if (session?.user) {
             setAvatarUrl(session.user.image || "");
@@ -68,7 +72,6 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
         }
     }, [session]);
 
-    // Helper to switch tabs and update URL
     const handleTabChange = (tabId: string) => {
         setActiveTab(tabId);
         router.push(`/user/dashboard?tab=${tabId}`, { scroll: false });
@@ -80,26 +83,18 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
         await signOut({ callbackUrl: "/" });
     };
 
+    // Profile Update Handler (Restored)
     const handleProfileUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSaving(true);
-
         try {
             const result = await updateUserProfile({ firstName, lastName, image: avatarUrl });
-
             if (result.error) {
                 toast.error(result.error);
                 return;
             }
-
-            await update({
-                user: {
-                    name: `${firstName} ${lastName}`,
-                    image: avatarUrl
-                }
-            });
-
-            toast.success("Profile updated successfully!");
+            await update({ user: { name: `${firstName} ${lastName}`, image: avatarUrl } });
+            toast.success("Profile updated!");
             router.refresh();
         } catch (error) {
             toast.error("Failed to update profile.");
@@ -108,9 +103,41 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
         }
     };
 
+    // Open Modal
+    const openReviewModal = (product: any) => {
+        setReviewProduct({ id: product.id, name: product.name, image: product.image });
+        setRating(0);
+        setComment("");
+        setIsReviewModalOpen(true);
+    };
+
+    // Submit Review
+    const handleSubmitReview = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (rating === 0) return toast.error("Please select a rating.");
+        if (!reviewProduct) return;
+
+        setIsSubmittingReview(true);
+        const res = await createReview({
+            productId: reviewProduct.id,
+            rating,
+            comment
+        });
+
+        if (res.error) {
+            toast.error(res.error);
+        } else {
+            toast.success("Review submitted!");
+            setIsReviewModalOpen(false);
+            router.refresh();
+        }
+        setIsSubmittingReview(false);
+    };
+
     const menuItems = [
         { id: "overview", label: "Overview", icon: User },
         { id: "downloads", label: "My Downloads", icon: Download },
+        { id: "reviews", label: "My Reviews", icon: MessageSquare },
         { id: "settings", label: "Settings", icon: Settings },
     ];
 
@@ -127,7 +154,6 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
 
             <div className="flex-grow pt-32 pb-20 relative z-10">
                 <div className="max-w-7xl mx-auto px-6">
-                    {/* Header */}
                     <div className="flex flex-col md:flex-row justify-between items-start mb-12 gap-4">
                         <div>
                             <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-2">My Account</h1>
@@ -149,7 +175,7 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
                                     {menuItems.map((item) => (
                                         <button
                                             key={item.id}
-                                            onClick={() => handleTabChange(item.id)} // Updated to handle URL change
+                                            onClick={() => handleTabChange(item.id)}
                                             className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${activeTab === item.id ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 cursor-pointer" : "text-muted-foreground hover:text-foreground hover:bg-secondary cursor-pointer"}`}
                                         >
                                             <item.icon size={18} /> {item.label}
@@ -173,7 +199,7 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
                         <div className="lg:col-span-3">
                             <AnimatePresence mode="wait">
 
-                                {/* 1. OVERVIEW TAB */}
+                                {/* 1. OVERVIEW */}
                                 {activeTab === "overview" && (
                                     <motion.div key="overview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }} className="space-y-8">
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -186,11 +212,12 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
                                                 <div><p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Products Owned</p><p className="text-2xl font-heading font-bold text-foreground">{stats.productsOwned}</p></div>
                                             </div>
                                             <div className="bg-card border border-border p-6 rounded-2xl shadow-sm flex items-center gap-4">
-                                                <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center text-foreground"><FileText size={24} /></div>
-                                                <div><p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Support Tickets</p><p className="text-2xl font-heading font-bold text-foreground">0</p></div>
+                                                <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center text-foreground"><MessageSquare size={24} /></div>
+                                                <div><p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">My Reviews</p><p className="text-2xl font-heading font-bold text-foreground">{reviews.length}</p></div>
                                             </div>
                                         </div>
 
+                                        {/* RECENT ACTIVITY */}
                                         <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
                                             <div className="p-6 border-b border-border flex justify-between items-center">
                                                 <h3 className="font-heading font-bold text-lg text-foreground">Recent Activity</h3>
@@ -224,7 +251,7 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
                                     </motion.div>
                                 )}
 
-                                {/* 2. DOWNLOADS TAB */}
+                                {/* 2. DOWNLOADS */}
                                 {activeTab === "downloads" && (
                                     <motion.div key="downloads" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6">
                                         <h2 className="text-xl font-heading font-bold text-foreground">My Downloads</h2>
@@ -246,9 +273,17 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
                                                             <Link href={item.fileUrl} target="_blank" className="px-4 py-2 bg-primary text-primary-foreground text-xs font-bold rounded-lg shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center gap-2">
                                                                 <Download size={14} /> Download Files
                                                             </Link>
-                                                            <button className="px-4 py-2 bg-background border border-border text-foreground text-xs font-bold rounded-lg hover:bg-secondary transition-colors flex items-center gap-2">
-                                                                <ShieldCheck size={14} /> License Certificate
-                                                            </button>
+
+                                                            {/* Review Button Logic */}
+                                                            {item.hasReviewed ? (
+                                                                <button disabled className="px-4 py-2 bg-green-500/10 text-green-600 border border-green-500/20 text-xs font-bold rounded-lg cursor-default flex items-center gap-2">
+                                                                    <Star size={14} fill="currentColor" /> Reviewed
+                                                                </button>
+                                                            ) : (
+                                                                <button onClick={() => openReviewModal(item)} className="px-4 py-2 bg-background border border-border text-foreground text-xs font-bold rounded-lg hover:bg-secondary hover:text-primary transition-colors flex items-center gap-2 cursor-pointer">
+                                                                    <Star size={14} /> Write Review
+                                                                </button>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -257,7 +292,6 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
                                                 <div className="p-12 text-center border border-dashed border-border rounded-2xl">
                                                     <ShoppingBag size={48} className="mx-auto text-muted-foreground mb-4 opacity-50" />
                                                     <h3 className="text-lg font-bold text-foreground">No downloads found</h3>
-                                                    <p className="text-muted-foreground text-sm mb-4">You haven't purchased any items yet.</p>
                                                     <Link href="/products" className="text-primary font-bold hover:underline text-sm">Browse Products</Link>
                                                 </div>
                                             )}
@@ -265,7 +299,42 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
                                     </motion.div>
                                 )}
 
-                                {/* 3. SETTINGS TAB */}
+                                {/* 3. MY REVIEWS TAB */}
+                                {activeTab === "reviews" && (
+                                    <motion.div key="reviews" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6">
+                                        <h2 className="text-xl font-heading font-bold text-foreground">My Reviews</h2>
+                                        <div className="grid grid-cols-1 gap-4">
+                                            {reviews.map((review) => (
+                                                <div key={review.id} className="bg-card border border-border rounded-2xl p-6 flex gap-6 shadow-sm">
+                                                    <div className="w-16 h-16 rounded-xl bg-muted border border-border overflow-hidden flex-shrink-0 relative">
+                                                        <Image src={review.product.imageUrl} alt={review.product.name} fill className="object-cover" />
+                                                    </div>
+                                                    <div className="flex-1">
+                                                        <div className="flex justify-between items-start">
+                                                            <h3 className="font-bold text-foreground text-base">{review.product.name}</h3>
+                                                            <span className="text-xs text-muted-foreground">{format(new Date(review.createdAt), "MMM dd, yyyy")}</span>
+                                                        </div>
+                                                        <div className="flex text-amber-500 my-2">
+                                                            {[...Array(5)].map((_, i) => (
+                                                                <Star key={i} size={14} fill={i < review.rating ? "currentColor" : "none"} className={i >= review.rating ? "text-muted/20" : ""} />
+                                                            ))}
+                                                        </div>
+                                                        <p className="text-sm text-muted-foreground italic">"{review.comment}"</p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            {reviews.length === 0 && (
+                                                <div className="p-12 text-center border border-dashed border-border rounded-2xl">
+                                                    <MessageSquare size={48} className="mx-auto text-muted-foreground mb-4 opacity-50" />
+                                                    <h3 className="text-lg font-bold text-foreground">No reviews yet</h3>
+                                                    <p className="text-muted-foreground text-sm">Go to Downloads to review your purchases.</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </motion.div>
+                                )}
+
+                                {/* 4. SETTINGS (RESTORED COMPLETELY) */}
                                 {activeTab === "settings" && (
                                     <motion.div
                                         key="settings"
@@ -292,22 +361,11 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
                                                 <UploadButton
                                                     endpoint="imageUploader"
                                                     onClientUploadComplete={async (res) => {
-                                                        // Fix: Handle both old and new UploadThing URL properties
                                                         // @ts-ignore
                                                         const newUrl = res[0].ufsUrl || res[0].url;
-
                                                         setAvatarUrl(newUrl);
-
-                                                        // A. Update Database
                                                         await updateUserProfile({ image: newUrl });
-
-                                                        // B. Update Session Trigger (Updates Navbar instantly)
-                                                        await update({
-                                                            user: {
-                                                                name: `${firstName} ${lastName}`,
-                                                                image: newUrl
-                                                            }
-                                                        });
+                                                        await update({ user: { name: `${firstName} ${lastName}`, image: newUrl } });
                                                         toast.success("Avatar updated!");
                                                         router.refresh();
                                                     }}
@@ -364,7 +422,45 @@ export default function UserDashboardClient({ user, stats, purchases }: Dashboar
                     </div>
                 </div>
             </div>
+
             <Footer />
+
+            {/* --- REVIEW MODAL (PORTAL) --- */}
+            {typeof document !== 'undefined' && createPortal(
+                <AnimatePresence>
+                    {isReviewModalOpen && (
+                        <>
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsReviewModalOpen(false)} className="fixed inset-0 z-[9998] bg-background/80 backdrop-blur-sm" />
+                            <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 20 }} className="fixed left-1/2 top-1/2 z-[9999] w-full max-w-md -translate-x-1/2 -translate-y-1/2 px-4">
+                                <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-8 shadow-2xl">
+                                    <button onClick={() => setIsReviewModalOpen(false)} className="absolute right-4 top-4 p-2 text-muted-foreground hover:bg-muted hover:text-foreground rounded-full transition-colors"><X size={20} /></button>
+                                    <div className="text-center mb-6">
+                                        <div className="w-16 h-16 bg-muted rounded-xl mx-auto mb-4 relative overflow-hidden border border-border">
+                                            {reviewProduct && <Image src={reviewProduct.image} alt={reviewProduct.name} fill className="object-cover" />}
+                                        </div>
+                                        <h2 className="text-xl font-heading font-bold text-foreground">Review {reviewProduct?.name}</h2>
+                                        <p className="text-muted-foreground text-xs mt-1">Share your experience with this product.</p>
+                                    </div>
+                                    <form onSubmit={handleSubmitReview} className="space-y-4">
+                                        <div className="flex justify-center gap-2 mb-2">
+                                            {[1, 2, 3, 4, 5].map((star) => (
+                                                <button key={star} type="button" onClick={() => setRating(star)} className="hover:scale-110 transition-transform cursor-pointer">
+                                                    <Star size={32} className={star <= rating ? "fill-yellow-400 text-yellow-400" : "fill-muted/20 text-muted-foreground/30"} />
+                                                </button>
+                                            ))}
+                                        </div>
+                                        <textarea required value={comment} onChange={(e) => setComment(e.target.value)} placeholder="Write your feedback..." className="w-full bg-background border border-border rounded-xl p-4 min-h-[100px] outline-none focus:border-primary transition-colors text-sm" />
+                                        <button type="submit" disabled={isSubmittingReview} className="w-full cursor-pointer flex items-center justify-center gap-2 bg-primary text-primary-foreground font-bold py-3 rounded-xl text-sm hover:bg-primary/90 transition-all disabled:opacity-50">
+                                            {isSubmittingReview ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />} Submit Review
+                                        </button>
+                                    </form>
+                                </div>
+                            </motion.div>
+                        </>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
         </main>
     );
 }

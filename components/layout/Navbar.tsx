@@ -3,7 +3,19 @@
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { Search, ShoppingBag, Menu, X, ChevronRight, User, LogOut, LayoutDashboard, Settings, Download } from "lucide-react";
+import {
+    Search,
+    ShoppingBag,
+    Menu,
+    X,
+    ChevronRight,
+    User,
+    LogOut,
+    LayoutDashboard,
+    Settings,
+    Download,
+    MessageSquare
+} from "lucide-react";
 import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession, signOut } from "next-auth/react";
@@ -191,6 +203,13 @@ export default function Navbar() {
                                                         className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors"
                                                     >
                                                         <Download size={16} className="text-muted-foreground" /> My Downloads
+                                                    </Link>
+                                                    <Link
+                                                        href="/user/dashboard?tab=reviews" // FIX: Added query param
+                                                        onClick={() => setIsProfileMenuOpen(false)}
+                                                        className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                                                    >
+                                                        <MessageSquare size={16} className="text-muted-foreground" /> My Reviews
                                                     </Link>
                                                     <Link
                                                         href="/user/dashboard?tab=settings" // FIX: Added query param

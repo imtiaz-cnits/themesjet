@@ -115,9 +115,9 @@ export default function Footer() {
                         </ul>
                     </div>
 
-                    {/* Support Links */}
+                    {/* Links */}
                     <div>
-                        <h4 className="text-foreground font-bold font-heading mb-6 text-base">Support</h4>
+                        <h4 className="text-foreground font-bold font-heading mb-6 text-base">Links</h4>
                         <ul className="space-y-3 text-muted-foreground font-body">
                             <li><Link href="/help-center" className="hover:text-primary transition-colors">Help Center</Link></li>
                             <li><Link href="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
