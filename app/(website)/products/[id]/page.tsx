@@ -3,8 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import ProductClientView from "@/components/product/ProductClientView";
-import ProductReviews from "@/components/reviews/ProductReviews"; // List Only
-import ReviewForm from "@/components/reviews/ReviewForm"; // Import Form
+import ProductReviews from "@/components/reviews/ProductReviews";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import TopBar from "@/components/layout/Topbar";
@@ -24,7 +23,7 @@ export default async function ProductDetailsPage(props: PageProps) {
                 select: { orderItems: true }
             },
             reviews: {
-                select: { rating: true } // Fetch only ratings to calculate average
+                select: { rating: true }
             }
         }
     });
@@ -53,8 +52,8 @@ export default async function ProductDetailsPage(props: PageProps) {
         ...product,
         price: Number(product.price),
         salesCount: product._count.orderItems,
-        averageRating: averageRating, // Pass calculated rating
-        totalReviews: totalReviews,   // Pass total count
+        averageRating: averageRating,
+        totalReviews: totalReviews,
         tags: Array.isArray(product.tags) ? product.tags as string[] : []
     };
 
@@ -72,11 +71,15 @@ export default async function ProductDetailsPage(props: PageProps) {
                 </div>
             </div>
 
-            {/* Client UI */}
-            <ProductClientView
-                product={formattedProduct}
-                reviewsComponent={<ProductReviews productId={product.id} />}
-            />
+            {/* Client UI (Tabs & Description) */}
+            <ProductClientView product={formattedProduct} />
+
+            {/* REVIEWS SECTION CONTAINER (Moved Back Here) */}
+            <div className="bg-background border-t border-border">
+                <div className="max-w-7xl mx-auto px-6 py-20">
+                    <ProductReviews productId={product.id} />
+                </div>
+            </div>
 
             {/* Related Products */}
             {relatedProducts.length > 0 && (

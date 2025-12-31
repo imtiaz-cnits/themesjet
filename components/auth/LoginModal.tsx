@@ -3,7 +3,8 @@
 import { signIn } from "next-auth/react";
 import { X, Github, Mail, Lock, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom"; // Import Portal
 import { toast } from "sonner";
 
 interface LoginModalProps {
@@ -15,11 +16,20 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     const [isLoading, setIsLoading] = useState<string | null>(null);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [mounted, setMounted] = useState(false);
+
+    // Prevent hydration mismatch and ensure document exists
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    // Helper: Get current page URL to return here after login
+    const getCurrentUrl = () => window.location.href;
 
     // Handle Social Login
     const handleSocialLogin = (provider: string) => {
         setIsLoading(provider);
-        signIn(provider, { callbackUrl: "/checkout" });
+        signIn(provider, { callbackUrl: getCurrentUrl() });
     };
 
     // Handle Email/Password Login
@@ -31,16 +41,16 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
             const result = await signIn("credentials", {
                 email,
                 password,
-                redirect: false, // We handle redirect to check for errors first
-                callbackUrl: "/checkout"
+                redirect: false,
+                callbackUrl: getCurrentUrl()
             });
 
             if (result?.error) {
                 toast.error("Invalid email or password");
                 setIsLoading(null);
             } else {
-                // Success: Redirect manually
-                window.location.href = "/checkout";
+                toast.success("Welcome back!");
+                window.location.reload();
             }
         } catch (error) {
             toast.error("Something went wrong");
@@ -48,25 +58,29 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
         }
     };
 
-    return (
+    // Don't render anything on the server or if closed
+    if (!mounted) return null;
+
+    // USE PORTAL to move this component outside of any parent divs (like motion.div)
+    return createPortal(
         <AnimatePresence>
             {isOpen && (
                 <>
-                    {/* Backdrop */}
+                    {/* Backdrop - High Z-Index to cover Navbar (usually z-50) */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 z-[60] bg-background/80 backdrop-blur-sm"
+                        className="fixed inset-0 z-[9998] bg-background/80 backdrop-blur-sm"
                     />
 
-                    {/* Modal */}
+                    {/* Modal - Highest Z-Index */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="fixed left-1/2 top-1/2 z-[70] w-full max-w-md -translate-x-1/2 -translate-y-1/2 px-4"
+                        className="fixed left-1/2 top-1/2 z-[9999] w-full max-w-md -translate-x-1/2 -translate-y-1/2 px-4"
                     >
                         <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-8 shadow-2xl">
 
@@ -82,14 +96,12 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             <div className="text-center mb-8">
                                 <div className="mb-4 flex justify-center">
                                     <div className="h-12 w-12 rounded-xl bg-primary flex items-center justify-center text-primary-foreground shadow-lg shadow-primary/25">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-6 h-6">
-                                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-                                        </svg>
+                                        <Lock className="w-6 h-6" />
                                     </div>
                                 </div>
-                                <h2 className="text-2xl font-heading font-bold text-foreground">Welcome Back</h2>
+                                <h2 className="text-2xl font-heading font-bold text-foreground">Login Required</h2>
                                 <p className="text-muted-foreground text-sm mt-2">
-                                    Sign in to complete your purchase.
+                                    Please sign in to leave a review.
                                 </p>
                             </div>
 
@@ -105,6 +117,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                     ) : (
                                         <>
                                             <div className="w-5 h-5 relative">
+                                                {/* Google SVG */}
                                                 <svg viewBox="0 0 24 24" className="w-full h-full">
                                                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
                                                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
@@ -181,14 +194,11 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                     {isLoading === "credentials" ? <Loader2 size={18} className="animate-spin" /> : "Sign In with Email"}
                                 </button>
                             </form>
-
-                            <p className="text-center text-xs text-muted-foreground mt-6">
-                                By clicking continue, you agree to our <a href="#" className="underline hover:text-foreground">Terms</a> and <a href="#" className="underline hover:text-foreground">Privacy Policy</a>.
-                            </p>
                         </div>
                     </motion.div>
                 </>
             )}
-        </AnimatePresence>
+        </AnimatePresence>,
+        document.body // Target the body directly
     );
 }

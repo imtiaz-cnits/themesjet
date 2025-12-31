@@ -8,7 +8,6 @@ import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import AddToCartButton from "./AddToCartButton";
-import ReviewForm from "@/components/reviews/ReviewForm";
 
 interface ProductProps {
     id: string;
@@ -23,21 +22,15 @@ interface ProductProps {
     createdAt: Date;
     updatedAt: Date;
     salesCount: number;
-    averageRating: number; // Added
-    totalReviews: number;  // Added
+    averageRating: number;
+    totalReviews: number;
 }
 
-interface ClientViewProps {
-    product: ProductProps;
-    reviewsComponent: React.ReactNode;
-}
-
-export default function ProductClientView({ product, reviewsComponent }: ClientViewProps) {
+export default function ProductClientView({ product }: { product: ProductProps }) {
     const [activeTab, setActiveTab] = useState("details");
     const router = useRouter();
     const { addToCart } = useCart();
 
-    // Handle Buy Now Logic
     const handleBuyNow = () => {
         addToCart({
             id: product.id,
@@ -59,14 +52,12 @@ export default function ProductClientView({ product, reviewsComponent }: ClientV
                         <h1 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-4 leading-tight">{product.name}</h1>
                         <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
 
-                            {/* DYNAMIC STAR RATING */}
                             <div className="flex items-center text-amber-500 font-bold">
                                 <div className="flex mr-1">
                                     {[...Array(5)].map((_, i) => (
                                         <Star
                                             key={i}
                                             size={14}
-                                            // Fill logic: if index is less than rounded average, fill it.
                                             fill={i < Math.round(product.averageRating) ? "currentColor" : "none"}
                                             className={i >= Math.round(product.averageRating) ? "text-muted-foreground/30" : ""}
                                         />
@@ -96,7 +87,7 @@ export default function ProductClientView({ product, reviewsComponent }: ClientV
                     {/* Tabs Navigation */}
                     <div className="border-b border-border mb-8">
                         <nav className="flex gap-8">
-                            {['details', 'reviews', 'support'].map((tab) => (
+                            {['details', 'support'].map((tab) => (
                                 <button
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
@@ -106,7 +97,7 @@ export default function ProductClientView({ product, reviewsComponent }: ClientV
                                             : "border-transparent text-muted-foreground hover:text-foreground"
                                     }`}
                                 >
-                                    {tab === 'details' ? 'Item Details' : tab}
+                                    {tab === 'details' ? 'Item Details' : 'Support'}
                                 </button>
                             ))}
                         </nav>
@@ -121,29 +112,13 @@ export default function ProductClientView({ product, reviewsComponent }: ClientV
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                             >
-                                <div className="prose prose-neutral dark:prose-invert max-w-none text-muted-foreground mb-16">
-                                    <p className="text-lg leading-relaxed whitespace-pre-wrap">{product.description}</p>
-                                </div>
-
-                                {/* Divider */}
-                                <div className="h-px bg-border my-12" />
-
-                                {/* REVIEW FORM at the bottom of Description */}
-                                <div>
-                                    <h3 className="text-xl font-heading font-bold text-foreground mb-6">Leave a Review</h3>
-                                    <ReviewForm productId={product.id} />
+                                <div className="prose prose-neutral dark:prose-invert max-w-none text-muted-foreground">
+                                    <p className="mb-6 text-lg leading-relaxed whitespace-pre-wrap">{product.description}</p>
                                 </div>
                             </motion.div>
                         )}
 
-                        {/* 2. REVIEWS TAB */}
-                        {activeTab === 'reviews' && (
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                                {reviewsComponent}
-                            </motion.div>
-                        )}
-
-                        {/* 3. SUPPORT TAB */}
+                        {/* 2. SUPPORT TAB */}
                         {activeTab === 'support' && (
                             <motion.div
                                 initial={{ opacity: 0, y: 10 }}

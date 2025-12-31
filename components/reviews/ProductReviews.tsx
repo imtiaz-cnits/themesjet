@@ -33,7 +33,7 @@ export default async function ProductReviews({ productId }: { productId: string 
 
             <div className="grid lg:grid-cols-12 gap-12">
 
-                {/* Left Column: Form */}
+                {/* Left Column: Form (Restored Here) */}
                 <div className="lg:col-span-4">
                     <div className="sticky top-32">
                         <ReviewForm productId={productId} />
@@ -44,10 +44,10 @@ export default async function ProductReviews({ productId }: { productId: string 
                 <div className="lg:col-span-8 space-y-8">
                     {reviews.length > 0 ? (
                         reviews.map((review) => (
-                            <div key={review.id} className="flex gap-4">
+                            <div key={review.id} className="flex gap-4 border-b border-border pb-8 last:border-0 last:pb-0">
                                 {/* Avatar */}
                                 <div className="shrink-0">
-                                    <div className="w-10 h-10 rounded-full bg-secondary border border-border overflow-hidden relative">
+                                    <div className="w-12 h-12 rounded-full bg-secondary border border-border overflow-hidden relative">
                                         {review.user.image ? (
                                             <Image src={review.user.image} alt={review.user.name || "User"} fill className="object-cover" />
                                         ) : (
@@ -61,11 +61,11 @@ export default async function ProductReviews({ productId }: { productId: string 
                                 {/* Content */}
                                 <div className="flex-1 space-y-2">
                                     <div className="flex items-center justify-between">
-                                        <h4 className="font-bold text-sm text-foreground">{review.user.name}</h4>
+                                        <h4 className="font-bold text-foreground">{review.user.name}</h4>
                                         <span className="text-xs text-muted-foreground">{formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })}</span>
                                     </div>
-                                    <StarRating rating={review.rating} readOnly size={14} />
-                                    <p className="text-sm text-muted-foreground leading-relaxed">
+                                    <StarRating rating={review.rating} readOnly size={16} />
+                                    <p className="text-muted-foreground leading-relaxed mt-2">
                                         {review.comment}
                                     </p>
                                 </div>
