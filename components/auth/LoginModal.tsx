@@ -87,7 +87,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                             {/* Close Button */}
                             <button
                                 onClick={onClose}
-                                className="absolute right-4 top-4 p-2 text-muted-foreground hover:bg-muted hover:text-foreground rounded-full transition-colors"
+                                className="absolute cursor-pointer right-4 top-4 p-2 text-muted-foreground hover:bg-muted hover:text-foreground rounded-full transition-colors"
                             >
                                 <X size={20} />
                             </button>
@@ -110,7 +110,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                 <button
                                     onClick={() => handleSocialLogin("google")}
                                     disabled={!!isLoading}
-                                    className="relative w-full flex items-center justify-center gap-3 bg-background border border-border hover:bg-secondary/50 text-foreground font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+                                    className="relative w-full flex items-center cursor-pointer justify-center gap-3 bg-background border border-border hover:bg-secondary/50 text-foreground font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
                                 >
                                     {isLoading === "google" ? (
                                         <Loader2 className="h-5 w-5 animate-spin" />
@@ -133,7 +133,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                 <button
                                     onClick={() => handleSocialLogin("github")}
                                     disabled={!!isLoading}
-                                    className="w-full flex items-center justify-center gap-3 bg-[#24292F] text-white font-bold py-3.5 rounded-xl hover:bg-[#24292F]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="w-full flex items-center cursor-pointer justify-center gap-3 bg-[#24292F] text-white font-bold py-3.5 rounded-xl hover:bg-[#24292F]/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {isLoading === "github" ? (
                                         <Loader2 className="h-5 w-5 animate-spin" />
@@ -189,7 +189,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                                 <button
                                     type="submit"
                                     disabled={!!isLoading}
-                                    className="w-full flex items-center justify-center gap-2 bg-foreground text-background font-bold py-3 rounded-xl text-sm hover:opacity-90 transition-all disabled:opacity-50"
+                                    className="w-full flex items-center cursor-pointer justify-center gap-2 bg-foreground text-background font-bold py-3 rounded-xl text-sm hover:opacity-90 transition-all disabled:opacity-50"
                                 >
                                     {isLoading === "credentials" ? <Loader2 size={18} className="animate-spin" /> : "Sign In with Email"}
                                 </button>
@@ -199,6 +199,6 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
                 </>
             )}
         </AnimatePresence>,
-        document.body // Target the body directly
+        document.body
     );
 }
