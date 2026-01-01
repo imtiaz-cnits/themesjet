@@ -9,7 +9,7 @@ datasource db {
 }
 
 model account {
-  id                String  @id
+  id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
@@ -21,40 +21,46 @@ model account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
-  user              user    @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Account_userId_fkey")
+
+  // Renamed relation to 'user' (singular is correct here)
+  user user @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Account_userId_fkey")
 
   @@unique([provider, providerAccountId], map: "Account_provider_providerAccountId_key")
   @@index([userId], map: "Account_userId_idx")
 }
 
 model order {
-  id        String      @id
+  id        String   @id @default(cuid())
   userId    String
-  total     Decimal     @db.Decimal(10, 2)
-  status    String      @default("PENDING")
+  total     Decimal  @db.Decimal(10, 2)
+  status    String   @default("PENDING")
   stripeId  String?
-  createdAt DateTime    @default(now())
-  updatedAt DateTime
-  user      user        @relation(fields: [userId], references: [id], map: "Order_userId_fkey")
-  orderitem orderitem[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user user @relation(fields: [userId], references: [id], map: "Order_userId_fkey")
+
+  // FIX: Renamed from 'orderitem' to 'items' to match your code
+  items orderitem[]
 
   @@index([userId], map: "Order_userId_idx")
 }
 
 model orderitem {
-  id        String  @id
+  id        String  @id @default(cuid())
   orderId   String
   productId String
   price     Decimal @db.Decimal(10, 2)
-  order     order   @relation(fields: [orderId], references: [id], map: "OrderItem_orderId_fkey")
-  product   product @relation(fields: [productId], references: [id], map: "OrderItem_productId_fkey")
+
+  order   order   @relation(fields: [orderId], references: [id], map: "OrderItem_orderId_fkey")
+  product product @relation(fields: [productId], references: [id], map: "OrderItem_productId_fkey")
 
   @@index([orderId], map: "OrderItem_orderId_idx")
   @@index([productId], map: "OrderItem_productId_idx")
 }
 
 model post {
-  id         String   @id
+  id         String   @id @default(cuid())
   slug       String   @unique(map: "Post_slug_key")
   title      String
   excerpt    String   @db.Text
@@ -65,37 +71,43 @@ model post {
   readTime   String
   published  Boolean  @default(true)
   createdAt  DateTime @default(now())
-  updatedAt  DateTime
+  updatedAt  DateTime @updatedAt
 }
 
 model product {
-  id          String      @id
+  id          String  @id @default(cuid())
   name        String
-  description String      @db.Text
-  price       Decimal     @db.Decimal(10, 2)
-  imageUrl    String      @db.Text
-  fileUrl     String      @db.Text
+  description String  @db.Text
+  price       Decimal @db.Decimal(10, 2)
+  imageUrl    String  @db.Text
+  fileUrl     String  @db.Text
   version     String?
   framework   String?
   category    String
-  tags        String?     @db.Text
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime
-  orderitem   orderitem[]
-  review      review[]
+
+  // FIX: Changed from String to String[] (Array) to match your code
+  tags String[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // FIX: Renamed relations to match your code
+  orderItems orderitem[]
+  reviews    review[]
 }
 
 model review {
-  id         String   @id
+  id         String   @id @default(cuid())
   rating     Int
   comment    String   @db.Text
   userId     String
   productId  String
   createdAt  DateTime @default(now())
-  updatedAt  DateTime
+  updatedAt  DateTime @updatedAt
   isFeatured Boolean  @default(false)
-  product    product  @relation(fields: [productId], references: [id], onDelete: Cascade, map: "Review_productId_fkey")
-  user       user     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Review_userId_fkey")
+
+  product product @relation(fields: [productId], references: [id], onDelete: Cascade, map: "Review_productId_fkey")
+  user    user    @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Review_userId_fkey")
 
   @@index([productId], map: "Review_productId_idx")
   @@index([userId], map: "Review_userId_idx")
@@ -111,9 +123,11 @@ model user {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   emailVerified DateTime?
-  account       account[]
-  order         order[]
-  review        review[]
+
+  // FIX: Renamed relations to plural to match your code
+  accounts account[]
+  orders   order[]
+  reviews  review[]
 }
 
 enum user_role {

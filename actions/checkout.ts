@@ -12,7 +12,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 export async function createCheckoutSession(cartItems: any[]) {
     const session = await auth();
 
-    if (!session || !session.user) {
+    if (!session || !session.user || !session.user.id) {
         return { error: "You must be logged in to checkout." };
     }
 
@@ -21,15 +21,16 @@ export async function createCheckoutSession(cartItems: any[]) {
     }
 
     try {
-        // 1. Calculate Total
         const totalAmount = cartItems.reduce((acc: number, item: any) => acc + item.price, 0);
 
-        // 2. Create Order in Database (Status: PENDING)
         const newOrder = await prisma.order.create({
             data: {
-                userId: session.user.id,
+                user: {
+                    connect: { id: session.user.id }
+                },
                 total: totalAmount,
                 status: "PENDING",
+                // FIX: Now using 'items' because we renamed it in schema.prisma
                 items: {
                     create: cartItems.map((item: any) => ({
                         productId: item.id,
@@ -39,7 +40,6 @@ export async function createCheckoutSession(cartItems: any[]) {
             }
         });
 
-        // 3. Create Stripe Session
         const stripeSession = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             line_items: cartItems.map((item: any) => ({
