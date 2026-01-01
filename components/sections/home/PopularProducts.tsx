@@ -57,7 +57,7 @@ export default function PopularProducts({ products }: { products: ProductProps[]
                             initial={{ opacity: 0, x: 20 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
-                            className="group flex items-center gap-2 text-primary font-bold font-heading hover:text-primary/80 transition-colors"
+                            className="group flex items-center gap-2 text-primary cursor-pointer font-bold font-heading hover:text-primary/80 transition-colors"
                         >
                             View Marketplace <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </motion.button>
