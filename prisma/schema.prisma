@@ -102,14 +102,14 @@ model review {
 }
 
 model user {
-  id            String    @id
+  id            String    @id @default(cuid())
   name          String?
   email         String    @unique(map: "User_email_key")
   password      String?
   image         String?
   role          user_role @default(USER)
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime
+  updatedAt     DateTime  @updatedAt
   emailVerified DateTime?
   account       account[]
   order         order[]
