@@ -1,143 +1,122 @@
-// prisma/schema.prisma
-
 generator client {
-  provider      = "prisma-client-js"
-  binaryTargets = ["native", "rhel-openssl-1.0.x", "debian-openssl-3.0.x"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
-// --- USER & AUTHENTICATION MODELS ---
-
-enum Role {
-  USER
-  ADMIN
-}
-
-model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified DateTime?
-  password      String? // Hashed password (optional if using Google login only)
-  image         String?
-  role          Role      @default(USER)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  orders   Order[]
-  accounts Account[]
-  reviews  Review[]
-}
-
-// Required for NextAuth (Social Login like Google/GitHub)
-model Account {
-  id                String  @id @default(cuid())
+model account {
+  id                String  @id
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text // Use Text for long tokens in MySQL
+  refresh_token     String? @db.Text
   access_token      String? @db.Text
   expires_at        Int?
   token_type        String?
   scope             String?
   id_token          String? @db.Text
   session_state     String?
+  user              user    @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Account_userId_fkey")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-  @@index([userId])
+  @@unique([provider, providerAccountId], map: "Account_provider_providerAccountId_key")
+  @@index([userId], map: "Account_userId_idx")
 }
 
-// --- E-COMMERCE MODELS ---
+model order {
+  id        String      @id
+  userId    String
+  total     Decimal     @db.Decimal(10, 2)
+  status    String      @default("PENDING")
+  stripeId  String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime
+  user      user        @relation(fields: [userId], references: [id], map: "Order_userId_fkey")
+  orderitem orderitem[]
 
-model Product {
-  id          String  @id @default(cuid())
-  name        String
-  description String  @db.Text // Allows long text > 191 chars
-  price       Decimal @db.Decimal(10, 2) // Precision money handling
-
-  // Assets
-  imageUrl  String  @db.Text
-  fileUrl   String  @db.Text // The secure link to the zip file
-  version   String?
-  framework String? // e.g. "React", "Next.js"
-
-  // Metadata
-  category String
-  tags     Json? // Stores array like ["Admin", "Dark Mode"]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  orderItems OrderItem[]
-  reviews    Review[]
+  @@index([userId], map: "Order_userId_idx")
 }
 
-model Order {
-  id     String @id @default(cuid())
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
-
-  total    Decimal @db.Decimal(10, 2)
-  status   String  @default("PENDING") // PENDING, COMPLETED, FAILED
-  stripeId String? // Payment Intent ID from Stripe
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  items OrderItem[]
-
-  @@index([userId])
-}
-
-model OrderItem {
-  id      String @id @default(cuid())
-  orderId String
-  order   Order  @relation(fields: [orderId], references: [id])
-
+model orderitem {
+  id        String  @id
+  orderId   String
   productId String
-  product   Product @relation(fields: [productId], references: [id])
+  price     Decimal @db.Decimal(10, 2)
+  order     order   @relation(fields: [orderId], references: [id], map: "OrderItem_orderId_fkey")
+  product   product @relation(fields: [productId], references: [id], map: "OrderItem_productId_fkey")
 
-  price Decimal @db.Decimal(10, 2) // Price locked at time of purchase
-
-  @@index([orderId])
-  @@index([productId])
+  @@index([orderId], map: "OrderItem_orderId_idx")
+  @@index([productId], map: "OrderItem_productId_idx")
 }
 
-model Post {
-  id         String   @id @default(cuid())
-  slug       String   @unique
+model post {
+  id         String   @id
+  slug       String   @unique(map: "Post_slug_key")
   title      String
-  excerpt    String   @db.Text // Allows longer text
-  content    String   @db.Text // Full HTML/Markdown content
+  excerpt    String   @db.Text
+  content    String   @db.Text
   coverImage String
   category   String
   author     String
   readTime   String
   published  Boolean  @default(true)
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  updatedAt  DateTime
 }
 
-model Review {
-  id         String   @id @default(cuid())
-  rating     Int // 1 to 5
-  comment    String   @db.Text
-  isFeatured Boolean  @default(false)
-  userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  productId  String
-  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+model product {
+  id          String      @id
+  name        String
+  description String      @db.Text
+  price       Decimal     @db.Decimal(10, 2)
+  imageUrl    String      @db.Text
+  fileUrl     String      @db.Text
+  version     String?
+  framework   String?
+  category    String
+  tags        String?     @db.Text
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime
+  orderitem   orderitem[]
+  review      review[]
+}
 
-  @@index([productId])
-  @@index([userId])
+model review {
+  id         String   @id
+  rating     Int
+  comment    String   @db.Text
+  userId     String
+  productId  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+  isFeatured Boolean  @default(false)
+  product    product  @relation(fields: [productId], references: [id], onDelete: Cascade, map: "Review_productId_fkey")
+  user       user     @relation(fields: [userId], references: [id], onDelete: Cascade, map: "Review_userId_fkey")
+
+  @@index([productId], map: "Review_productId_idx")
+  @@index([userId], map: "Review_userId_idx")
+}
+
+model user {
+  id            String    @id
+  name          String?
+  email         String    @unique(map: "User_email_key")
+  password      String?
+  image         String?
+  role          user_role @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime
+  emailVerified DateTime?
+  account       account[]
+  order         order[]
+  review        review[]
+}
+
+enum user_role {
+  USER
+  ADMIN
 }
