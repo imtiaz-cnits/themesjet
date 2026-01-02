@@ -13,6 +13,7 @@ import ThemeStoreCTA from "@/components/sections/home/ThemeStoreCTA";
 import Footer from "@/components/layout/Footer";
 import { getPopularProducts, getLatestProducts } from "@/actions/product";
 import { getFeaturedReviews } from "@/actions/review";
+import StatsStrip from "@/components/sections/home/StatsStrip";
 
 // Set Revalidation (Optional: updates cache every hour)
 export const revalidate = 3600;
@@ -44,39 +45,8 @@ export default async function Home() {
             {/* 1. Global Navigation */}
             <TopBar />
             <Navbar />
-
-            {/* 2. HERO SECTION */}
             <HeroSection />
-
-            {/* STATS STRIP */}
-            <div className="border-y mb-10 border-border bg-card/30 backdrop-blur-md relative z-10">
-                <div className="max-w-7xl mx-auto px-6 py-10 flex flex-wrap justify-center md:justify-between items-center gap-8">
-                    <div className="text-center md:text-left">
-                        <h3 className="text-3xl font-bold text-foreground font-heading">500+</h3>
-                        <p className="text-sm text-muted-foreground uppercase tracking-widest font-body">Premium Assets</p>
-                    </div>
-                    <div className="h-10 w-px bg-border hidden md:block"></div>
-                    <div className="text-center md:text-left">
-                        <h3 className="text-3xl font-bold text-foreground font-heading">24/7</h3>
-                        <p className="text-sm text-muted-foreground uppercase tracking-widest font-body">Dedicated Support</p>
-                    </div>
-                    <div className="h-10 w-px bg-border hidden md:block"></div>
-                    <div className="text-center md:text-left">
-                        <h3 className="text-3xl font-bold text-foreground font-heading">10k+</h3>
-                        <p className="text-sm text-muted-foreground uppercase tracking-widest font-body">Happy Developers</p>
-                    </div>
-                    <div className="h-10 w-px bg-border hidden md:block"></div>
-
-                    {/* Logos */}
-                    <div className="flex gap-8 opacity-30 grayscale hover:grayscale-0 transition-all duration-500">
-                        <div className="h-8 w-24 bg-foreground/20 rounded"></div>
-                        <div className="h-8 w-24 bg-foreground/20 rounded"></div>
-                        <div className="h-8 w-24 bg-foreground/20 rounded"></div>
-                    </div>
-                </div>
-            </div>
-
-            {/* 3. POPULAR PRODUCTS SECTION */}
+            <StatsStrip />
             <PopularProducts products={popularProducts} />
             <BrowseCategories />
             <ServiceSection />
