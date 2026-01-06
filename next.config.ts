@@ -54,7 +54,7 @@ const nextConfig: NextConfig = {
 
                 // Next.js will fetch the content from your cPanel server
                 // REPLACE 'https://YOUR_CPANEL_IP_OR_DOMAIN' with your actual cPanel URL
-                destination: 'https://160.191.80.34/templates/:path*',
+                destination: 'https://alpha.raw-server.com:2083/templates/:path*',
             },
         ];
     },
