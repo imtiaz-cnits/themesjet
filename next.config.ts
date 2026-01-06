@@ -37,13 +37,22 @@ const nextConfig: NextConfig = {
                 hostname: "images.unsplash.com", // Unsplash (Mock Data Images)
                 pathname: "/**"
             },
-            // FIX: Allow UI Avatars domain
             {
                 protocol: "https",
                 hostname: "ui-avatars.com",
                 pathname: "/**"
             }
         ],
+    },
+
+    // 4. URL Rewrites (Fixes 404 on Vercel for /templates links)
+    async rewrites() {
+        return [
+            {
+                source: '/templates/:path*', // When user visits themesjet.com/templates/...
+                destination: '/products/:path*', // Next.js serves app/products/...
+            },
+        ];
     },
 };
 
