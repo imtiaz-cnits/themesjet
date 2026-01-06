@@ -44,20 +44,6 @@ const nextConfig: NextConfig = {
             }
         ],
     },
-
-    // 4. URL Rewrites (Fixes 404 on Vercel for /templates links)
-    async rewrites() {
-        return [
-            {
-                // When a user visits https://themesjet.com/templates/...
-                source: '/templates/:path*',
-
-                // Next.js will fetch the content from your cPanel server
-                // REPLACE 'https://YOUR_CPANEL_IP_OR_DOMAIN' with your actual cPanel URL
-                destination: 'https://alpha.raw-server.com:2083/templates/:path*',
-            },
-        ];
-    },
 };
 
 export default nextConfig;
