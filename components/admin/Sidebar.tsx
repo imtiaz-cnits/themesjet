@@ -14,7 +14,8 @@ const menuItems = [
     { name: "Revenue", icon: DollarSign, href: "/admin/revenue" },
     { name: "Reviews", icon: MessageSquare, href: "/admin/reviews" },
     { name: "Users", icon: User, href: "/admin/users" },
-    { name: "Insights", icon: BookOpen, href: "/admin/insights" }
+    { name: "Insights", icon: BookOpen, href: "/admin/insights" },
+    { name: "Service Requests", icon: BookOpen, href: "/admin/service-requests" }
 ];
 
 export default function AdminSidebar() {

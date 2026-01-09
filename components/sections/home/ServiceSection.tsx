@@ -112,7 +112,7 @@ export default function ServiceSection() {
                             </ul>
 
                             {/* Button */}
-                            <button className="mt-auto w-full py-4 rounded-xl border border-border bg-card/50 text-foreground font-bold hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 font-heading text-sm">
+                            <button className="mt-auto w-full cursor-pointer py-4 rounded-xl border border-border bg-card/50 text-foreground font-bold hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 font-heading text-sm">
                                 Get Quote
                             </button>
                         </motion.div>

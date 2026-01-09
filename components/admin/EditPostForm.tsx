@@ -7,7 +7,7 @@ import { UploadButton } from "@/lib/uploadthing";
 import { toast } from "sonner";
 import { Loader2, Save, Image as ImageIcon, X } from "lucide-react";
 import Image from "next/image";
-import TiptapEditor from "@/components/admin/TiptapEditor"; // Import Editor
+import TiptapEditor from "@/components/admin/TiptapEditor";
 
 interface PostProps {
     id: string;

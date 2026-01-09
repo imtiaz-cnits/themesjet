@@ -98,7 +98,7 @@ export default function HeroSection() {
                         </Link>
 
                         {/* Secondary Button */}
-                        <Link href="/hire" className="h-14 px-8 rounded-xl bg-card/50 border border-border text-foreground font-medium hover:bg-secondary/50 hover:border-primary/30 transition-all backdrop-blur-sm flex items-center justify-center gap-2 font-heading text-md w-full sm:w-auto group">
+                        <Link href="/services" className="h-14 px-8 rounded-xl bg-card/50 border border-border text-foreground font-medium hover:bg-secondary/50 hover:border-primary/30 transition-all backdrop-blur-sm flex items-center justify-center gap-2 font-heading text-md w-full sm:w-auto group">
                             <Briefcase className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
                             Hire Experts
                         </Link>

@@ -37,7 +37,7 @@ export default function ThemeStoreCTA() {
 
                         {/* Small Badge */}
                         <div className="
-                            w-10 h-10 rounded-lg backdrop-blur-md flex items-center justify-center font-bold text-sm mb-6 shadow-sm
+                            w-40 h-10 rounded-lg backdrop-blur-md flex items-center justify-center font-bold text-sm mb-6 shadow-sm
 
                             /* BADGE COLORS: Using variables */
                             bg-background border border-border text-ring
@@ -45,7 +45,7 @@ export default function ThemeStoreCTA() {
                             /* Dark Mode Override for Glassmorphism */
                             dark:bg-background/10 dark:border-white/10 dark:text-foreground
                         ">
-                            #1
+                            Themes Jet
                         </div>
 
                         {/* Title */}

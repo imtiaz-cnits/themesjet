@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x", "rhel-openssl-3.0.x", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -133,4 +134,30 @@ model user {
 enum user_role {
   USER
   ADMIN
+}
+
+// NEW MODEL: Service Request
+model ServiceRequest {
+  id String @id @default(cuid())
+
+  // Project Details
+  projectType    String
+  budget         Int
+  deadline       String
+  visibility     String
+  title          String?
+  description    String? @db.Text
+  attachmentUrl  String?
+  attachmentName String?
+
+  // Contact Info
+  name    String
+  email   String
+  phone   String?
+  company String
+
+  // System Info
+  status    String   @default("PENDING") // PENDING, CONTACTED, COMPLETED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

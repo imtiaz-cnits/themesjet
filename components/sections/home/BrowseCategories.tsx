@@ -29,7 +29,7 @@ const categories = [
     {
         id: "php",
         title: "PHP Scripts",
-        description: "Laravel & CodeIgniter",
+        description: "PHP & Laravel",
         icon: <Database className="w-6 h-6" />,
         color: "text-purple-400",
         bgColor: "bg-purple-500/20",
@@ -39,7 +39,7 @@ const categories = [
     {
         id: "ui",
         title: "UI Templates",
-        description: "Figma, Sketch, XD",
+        description: "Figma, Sketch, Framer",
         icon: <Palette className="w-6 h-6" />,
         color: "text-pink-400",
         bgColor: "bg-pink-500/20",
@@ -75,7 +75,7 @@ export default function BrowseCategories() {
                         </motion.h2>
                     </div>
                     <motion.a
-                        href="/products"
+                        href="/categories"
                         initial={{ opacity: 0, x: 20 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}

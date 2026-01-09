@@ -105,3 +105,21 @@ export async function getDashboardNotifications(limit = 5) {
         return [];
     }
 }
+
+
+// Manage Service Request Status Function
+export async function updateServiceRequestStatus(id: string, newStatus: string) {
+    try {
+        await prisma.serviceRequest.update({
+            where: { id },
+            data: { status: newStatus },
+        });
+
+        // Refresh the admin page to show new data
+        revalidatePath("/admin/service-requests");
+        return { success: true, message: "Status updated successfully" };
+    } catch (error) {
+        console.error("Error updating status:", error);
+        return { success: false, message: "Failed to update status" };
+    }
+}

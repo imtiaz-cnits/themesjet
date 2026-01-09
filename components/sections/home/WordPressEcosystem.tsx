@@ -90,7 +90,7 @@ export default function WordPressEcosystem() {
                                 </div>
                                 <div className="text-left">
                                     <div className="text-sm font-bold text-foreground font-heading">Premium Themes</div>
-                                    <div className="text-xs text-muted-foreground font-body">Q1 2026</div>
+                                    <div className="text-xs text-muted-foreground font-body">Coming Soon</div>
                                 </div>
                             </div>
 
@@ -108,7 +108,7 @@ export default function WordPressEcosystem() {
                                 </div>
                                 <div className="text-left">
                                     <div className="text-sm font-bold text-foreground font-heading">Utility Plugins</div>
-                                    <div className="text-xs text-muted-foreground font-body">Q1 2026</div>
+                                    <div className="text-xs text-muted-foreground font-body">Coming Soon</div>
                                 </div>
                             </div>
                         </div>

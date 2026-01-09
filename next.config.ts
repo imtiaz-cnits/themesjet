@@ -4,13 +4,15 @@ const nextConfig: NextConfig = {
     /* config options here */
 
     // 1. Output 'standalone' creates a simplified build for cPanel/Docker/Vercel
-    // output: 'standalone',
+    output: 'standalone',
 
     // 2. Strict mode is good for dev, keep it
     reactStrictMode: true,
 
     // 3. Allowed Image Domains
     images: {
+        unoptimized: true,
+
         remotePatterns: [
             {
                 protocol: "https",
