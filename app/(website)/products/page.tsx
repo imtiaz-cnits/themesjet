@@ -5,22 +5,52 @@ import TopBar from "@/components/layout/Topbar";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Link from "next/link";
+import StatsStrip from "@/components/sections/home/StatsStrip";
+import Testimonials from "@/components/sections/home/Testimonials";
+import { getPopularProducts, getLatestProducts } from "@/actions/product";
+import { getFeaturedReviews } from "@/actions/review";
+import ThemeStoreCTA from "@/components/sections/home/ThemeStoreCTA";
 
 interface PageProps {
     searchParams?: Promise<{
         category?: string;
         framework?: string;
+        minPrice?: string;
         maxPrice?: string;
         sort?: string;
         page?: string;
     }>;
 }
 
+    // 1. Fetch Data Parallelly for performance
+    const [rawPopular, rawLatest, featuredReviews] = await Promise.all([
+        getPopularProducts(),
+        getLatestProducts(),
+        getFeaturedReviews()
+    ]);
+
+    // 2. Data Transformation (Decimal -> Number)
+    const popularProducts = rawPopular.map((product) => ({
+        ...product,
+        price: Number(product.price),
+        tags: product.tags ? String(product.tags) : "",
+    }));
+
+    const latestProducts = rawLatest.map((product) => ({
+        ...product,
+        price: Number(product.price),
+        tags: product.tags ? String(product.tags) : "",
+    }));
+
 export default async function ProductsPage(props: PageProps) {
     const searchParams = await props.searchParams;
     const category = searchParams?.category;
     const framework = searchParams?.framework;
-    const maxPrice = Number(searchParams?.maxPrice) || undefined;
+
+    // FIX: Robust number parsing that handles '0' correctly
+    const minPrice = searchParams?.minPrice ? Number(searchParams.minPrice) : 0;
+    const maxPrice = searchParams?.maxPrice ? Number(searchParams.maxPrice) : undefined;
+
     const sort = searchParams?.sort || "newest";
 
     // Pagination
@@ -32,7 +62,13 @@ export default async function ProductsPage(props: PageProps) {
     const where: any = {};
     if (category) where.category = category;
     if (framework) where.framework = { contains: framework };
-    if (maxPrice) where.price = { lte: maxPrice };
+
+    // FIX: Updated Price Logic to support 0 and ranges
+    if (minPrice > 0 || maxPrice !== undefined) {
+        where.price = {};
+        if (minPrice > 0) where.price.gte = minPrice;
+        if (maxPrice !== undefined) where.price.lte = maxPrice;
+    }
 
     let orderBy: any = { createdAt: "desc" };
     if (sort === "price_asc") orderBy = { price: "asc" };
@@ -83,9 +119,6 @@ export default async function ProductsPage(props: PageProps) {
                             <span className="text-foreground">Products</span>
                         </div>
 
-                        {/* FIX: Changed 'items-end' to 'items-start md:items-end'
-                           This ensures Title is Left Aligned on Mobile, but Tabs align to Bottom on Desktop.
-                        */}
                         <div className="flex flex-col md:flex-row justify-between gap-4 md:gap-6 items-start md:items-end">
                             <div>
                                 <h1 className="font-heading font-bold text-3xl md:text-4xl text-foreground mb-2">
@@ -96,7 +129,6 @@ export default async function ProductsPage(props: PageProps) {
                                 </p>
                             </div>
 
-                            {/* Wrapper ensures tabs take full width on mobile for scrolling */}
                             <div className="w-full md:w-auto">
                                 <CategoryTabs />
                             </div>
@@ -111,6 +143,12 @@ export default async function ProductsPage(props: PageProps) {
                     totalPages={totalPages}
                     currentPage={currentPage}
                 />
+
+                <div className="mt-10">
+                    <StatsStrip />
+                    <Testimonials reviews={featuredReviews} />
+                    <ThemeStoreCTA />
+                </div>
             </div>
 
             <Footer />

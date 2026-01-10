@@ -1,14 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Filter, ChevronDown, Star, Eye, ShoppingCart, LayoutGrid, List, X, RotateCcw, Check } from "lucide-react";
+import { Filter, ChevronDown, Star, Eye, ShoppingCart, LayoutGrid, List, X, RotateCcw, Check } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
 import { useCart } from "@/context/CartContext";
-import { toast } from "sonner"; // 1. Import toast
+import { toast } from "sonner";
+
+// Import RC Slider dynamically to avoid SSR issues
+import dynamic from "next/dynamic";
+import "rc-slider/assets/index.css";
+const Slider = dynamic(() => import("rc-slider"), { ssr: false });
 
 interface Product {
     id: string;
@@ -32,16 +37,26 @@ interface ProductsBrowserProps {
 
 export default function ProductsBrowser({ initialProducts, totalCount, totalPages, currentPage }: ProductsBrowserProps) {
     const router = useRouter();
+    const pathname = usePathname();
     const searchParams = useSearchParams();
     const { addToCart, items } = useCart();
 
     // UI States
     const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
-    const [price, setPrice] = useState(Number(searchParams.get("maxPrice")) || 100);
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+    const [isMounted, setIsMounted] = useState(false);
 
-    // Check filters
-    const hasActiveFilters = searchParams.get("framework") || searchParams.get("maxPrice") || searchParams.get("rating");
+    // Price State
+    const MAX_PRICE_LIMIT = 100; // Increased limit slightly to be safe
+    const [priceRange, setPriceRange] = useState<number[]>([0, MAX_PRICE_LIMIT]);
+
+    // Initialize
+    useEffect(() => {
+        setIsMounted(true);
+        const min = searchParams.get("minPrice") ? Number(searchParams.get("minPrice")) : 0;
+        const max = searchParams.get("maxPrice") ? Number(searchParams.get("maxPrice")) : MAX_PRICE_LIMIT;
+        setPriceRange([min, max]);
+    }, [searchParams]);
 
     // Helper: Update URL Params
     const updateQuery = (newParams: Record<string, string | null>) => {
@@ -50,37 +65,108 @@ export default function ProductsBrowser({ initialProducts, totalCount, totalPage
             if (value === null) params.delete(key);
             else params.set(key, value);
         });
-        router.push(`/products?${params.toString()}`);
+
+        if (!newParams.page) params.set("page", "1");
+
+        router.push(`${pathname}?${params.toString()}`, { scroll: false });
     };
 
-    const updateFilter = (key: string, value: string) => updateQuery({ [key]: value || null, page: "1" });
-    const handlePriceChange = (newPrice: number) => { setPrice(newPrice); updateQuery({ maxPrice: newPrice.toString(), page: "1" }); };
+    // Handlers
+    const updateFilter = (key: string, value: string) => updateQuery({ [key]: value || null });
     const handlePageChange = (page: number) => updateQuery({ page: page.toString() });
-    const clearAllFilters = () => { setPrice(100); router.push("/products"); setIsMobileFilterOpen(false); };
 
-    // --- REUSABLE FILTER CONTENT ---
-    const FilterContent = () => (
+    // FIX: Replaced onAfterChange with onChangeComplete to fix console warning
+    const handleSliderChangeComplete = (value: number | number[]) => {
+        if (Array.isArray(value)) {
+            updateQuery({
+                minPrice: value[0] > 0 ? value[0].toString() : null,
+                maxPrice: value[1] < MAX_PRICE_LIMIT ? value[1].toString() : null
+            });
+        }
+    };
+
+    const handleManualInputSubmit = () => {
+        updateQuery({
+            minPrice: priceRange[0] > 0 ? priceRange[0].toString() : null,
+            maxPrice: priceRange[1] < MAX_PRICE_LIMIT ? priceRange[1].toString() : null
+        });
+    };
+
+    const clearAllFilters = () => {
+        setPriceRange([0, MAX_PRICE_LIMIT]);
+        router.push(pathname);
+        setIsMobileFilterOpen(false);
+    };
+
+    // --- FILTER UI ---
+    const filterUI = (
         <div className="space-y-8">
             <div className="flex items-center justify-between">
                 <h3 className="font-heading font-bold text-foreground text-sm uppercase tracking-wider">Filters</h3>
-                {hasActiveFilters && (
-                    <button onClick={clearAllFilters} className="text-xs font-bold text-red-500 hover:text-red-600 flex items-center gap-1 transition-colors">
+                {(searchParams.toString().length > 0 && searchParams.get("page") !== "1") || searchParams.toString().length > 7 ? (
+                    <button onClick={clearAllFilters} className="text-xs font-bold text-red-500 hover:text-red-600 flex items-center gap-1 transition-colors cursor-pointer">
                         <RotateCcw size={12} /> Clear All
                     </button>
-                )}
+                ) : null}
             </div>
+
             {/* Price Filter */}
             <div className="bg-card border border-border rounded-xl p-5 shadow-sm">
                 <h3 className="font-bold text-foreground text-xs mb-4 uppercase tracking-wider">Price Range</h3>
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between text-xs text-muted-foreground font-bold"><span>$0</span><span>${price}+</span></div>
-                    <input type="range" min="0" max="200" value={price} onChange={(e) => setPrice(Number(e.target.value))} onMouseUp={() => handlePriceChange(price)} className="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-primary" />
-                    <div className="flex gap-3">
-                        <div className="w-1/2 bg-background border border-border rounded px-3 py-2 text-sm text-center font-bold">$0</div>
-                        <div className="w-1/2 bg-background border border-border rounded px-3 py-2 text-sm text-center font-bold text-primary">${price}</div>
+                <div className="space-y-6 px-2">
+
+                    {isMounted && (
+                        <Slider
+                            range
+                            min={0}
+                            max={MAX_PRICE_LIMIT}
+                            value={priceRange as [number, number]}
+                            onChange={(val) => {
+                                if (Array.isArray(val)) setPriceRange(val as number[]);
+                            }}
+                            // FIX: Using onChangeComplete instead of onAfterChange
+                            onChangeComplete={handleSliderChangeComplete}
+                            trackStyle={{ backgroundColor: "var(--primary)", height: 4 }}
+                            handleStyle={[
+                                { borderColor: "var(--primary)", backgroundColor: "var(--background)", opacity: 1, borderWidth: 2, height: 18, width: 18, marginTop: -7, boxShadow: "0 2px 4px rgba(0,0,0,0.1)" },
+                                { borderColor: "var(--primary)", backgroundColor: "var(--background)", opacity: 1, borderWidth: 2, height: 18, width: 18, marginTop: -7, boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }
+                            ]}
+                            railStyle={{ backgroundColor: "var(--muted)", height: 4 }}
+                        />
+                    )}
+
+                    <div className="flex gap-3 items-center mt-4">
+                        <div className="relative w-1/2">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-xs font-bold">$</span>
+                            <input
+                                type="number"
+                                min="0"
+                                max={priceRange[1]}
+                                value={priceRange[0]}
+                                onChange={(e) => setPriceRange([Math.min(Number(e.target.value), priceRange[1]), priceRange[1]])}
+                                onBlur={handleManualInputSubmit}
+                                onKeyDown={(e) => e.key === 'Enter' && handleManualInputSubmit()}
+                                className="w-full bg-background border border-border rounded px-3 py-2 pl-6 text-sm text-center font-bold outline-none focus:border-primary transition-colors"
+                            />
+                        </div>
+                        <span className="text-muted-foreground font-bold">-</span>
+                        <div className="relative w-1/2">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary text-xs font-bold">$</span>
+                            <input
+                                type="number"
+                                min={priceRange[0]}
+                                max={MAX_PRICE_LIMIT}
+                                value={priceRange[1]}
+                                onChange={(e) => setPriceRange([priceRange[0], Math.max(Number(e.target.value), priceRange[0])])}
+                                onBlur={handleManualInputSubmit}
+                                onKeyDown={(e) => e.key === 'Enter' && handleManualInputSubmit()}
+                                className="w-full bg-background border border-border rounded px-3 py-2 pl-6 text-sm text-center font-bold text-primary outline-none focus:border-primary transition-colors"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
+
             {/* Framework Filter */}
             <div>
                 <h3 className="font-bold text-foreground text-xs mb-4 uppercase tracking-wider">Framework</h3>
@@ -99,17 +185,27 @@ export default function ProductsBrowser({ initialProducts, totalCount, totalPage
                     })}
                 </div>
             </div>
+
             {/* Rating Filter */}
             <div>
                 <h3 className="font-bold text-foreground text-xs mb-4 uppercase tracking-wider">Rating</h3>
                 <div className="space-y-2">
-                    {[5, 4].map((stars) => (
-                        <label key={stars} className="flex items-center gap-3 cursor-pointer group">
-                            <input type="radio" name="rating" className="w-4 h-4 accent-primary border-border" />
-                            <div className="flex text-amber-400 text-xs">{[...Array(5)].map((_, i) => (<Star key={i} size={14} fill={i < stars ? "currentColor" : "none"} className={i >= stars ? "text-muted" : ""} />))}</div>
-                            <span className="text-muted-foreground text-xs font-bold group-hover:text-foreground">& Up</span>
-                        </label>
-                    ))}
+                    {[5, 4].map((stars) => {
+                        const isChecked = searchParams.get("rating") === stars.toString();
+                        return (
+                            <label key={stars} className="flex items-center gap-3 cursor-pointer group">
+                                <input
+                                    type="radio"
+                                    name="rating"
+                                    checked={isChecked}
+                                    onChange={() => updateFilter("rating", stars.toString())}
+                                    className="w-4 h-4 accent-primary border-border"
+                                />
+                                <div className="flex text-amber-400 text-xs">{[...Array(5)].map((_, i) => (<Star key={i} size={14} fill={i < stars ? "currentColor" : "none"} className={i >= stars ? "text-muted" : ""} />))}</div>
+                                <span className="text-muted-foreground text-xs font-bold group-hover:text-foreground">& Up</span>
+                            </label>
+                        );
+                    })}
                 </div>
             </div>
         </div>
@@ -117,9 +213,12 @@ export default function ProductsBrowser({ initialProducts, totalCount, totalPage
 
     return (
         <div className="max-w-7xl mx-auto px-6 py-12">
-            <div className="flex flex-col lg:flex-row gap-10">
-                {/* SIDEBAR */}
-                <aside className="hidden lg:block lg:w-64 flex-shrink-0"><FilterContent /></aside>
+            <div className="flex flex-col lg:flex-row gap-10 items-start"> {/* Added items-start for sticky behavior */}
+
+                {/* SIDEBAR - FIX: Added sticky positioning */}
+                <aside className="hidden lg:block lg:w-64 flex-shrink-0 sticky top-28 h-fit">
+                    {filterUI}
+                </aside>
 
                 {/* MOBILE MODAL */}
                 <AnimatePresence>
@@ -131,7 +230,7 @@ export default function ProductsBrowser({ initialProducts, totalCount, totalPage
                                     <h2 className="text-xl font-heading font-bold text-foreground">Filters</h2>
                                     <button onClick={() => setIsMobileFilterOpen(false)} className="p-2 hover:bg-muted rounded-full transition-colors"><X size={24} /></button>
                                 </div>
-                                <FilterContent />
+                                {filterUI}
                                 <div className="mt-8 pt-4 border-t border-border">
                                     <button onClick={() => setIsMobileFilterOpen(false)} className="w-full py-3 bg-primary text-primary-foreground font-bold rounded-xl shadow-lg shadow-primary/20">Show Results</button>
                                 </div>
@@ -141,15 +240,15 @@ export default function ProductsBrowser({ initialProducts, totalCount, totalPage
                 </AnimatePresence>
 
                 {/* MAIN CONTENT */}
-                <main className="flex-1">
+                <main className="flex-1 w-full">
                     {/* Toolbar */}
                     <div className="flex flex-nowrap justify-between items-center mb-8 gap-3 bg-card p-2 rounded-xl border border-border shadow-sm">
                         <button onClick={() => setIsMobileFilterOpen(true)} className="lg:hidden flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-bold text-foreground bg-muted rounded-lg hover:bg-muted/80 transition-colors"><Filter size={18} /> <span className="hidden sm:inline">Filters</span></button>
                         <div className="hidden sm:flex items-center gap-4 pl-4"><span className="text-sm font-medium text-muted-foreground">Showing page <span className="text-foreground font-bold">{currentPage}</span> of {totalPages}</span></div>
                         <div className="flex items-center gap-2 ml-auto">
                             <div className="flex items-center bg-background border border-border rounded-lg p-1">
-                                <button onClick={() => setViewMode("grid")} className={`p-1.5 rounded transition-colors ${viewMode === "grid" ? "bg-muted text-primary" : "text-muted-foreground hover:bg-muted"}`}><LayoutGrid size={18} /></button>
-                                <button onClick={() => setViewMode("list")} className={`p-1.5 rounded transition-colors ${viewMode === "list" ? "bg-muted text-primary" : "text-muted-foreground hover:bg-muted"}`}><List size={18} /></button>
+                                <button onClick={() => setViewMode("grid")} className={`p-1.5 rounded cursor-pointer transition-colors ${viewMode === "grid" ? "bg-muted text-primary" : "text-muted-foreground hover:bg-muted"}`}><LayoutGrid size={18} /></button>
+                                <button onClick={() => setViewMode("list")} className={`p-1.5 rounded cursor-pointer transition-colors ${viewMode === "list" ? "bg-muted text-primary" : "text-muted-foreground hover:bg-muted"}`}><List size={18} /></button>
                             </div>
                             <div className="relative">
                                 <select onChange={(e) => updateFilter("sort", e.target.value)} className="appearance-none bg-background border border-border text-foreground text-sm font-bold rounded-lg pl-4 pr-8 py-2.5 outline-none focus:border-primary cursor-pointer w-full max-w-[140px] sm:max-w-none text-ellipsis">
@@ -197,7 +296,6 @@ export default function ProductsBrowser({ initialProducts, totalCount, totalPage
                                                         <span className="text-xs text-muted-foreground ml-1 font-bold">({product.reviews})</span>
                                                     </div>
 
-                                                    {/* 3. CART BUTTON WITH TOAST */}
                                                     <button
                                                         onClick={() => {
                                                             addToCart({
@@ -207,7 +305,6 @@ export default function ProductsBrowser({ initialProducts, totalCount, totalPage
                                                                 image: product.imageUrl,
                                                                 category: product.category
                                                             });
-                                                            // 2. Trigger Toast
                                                             toast.success(`${product.name} added to cart!`, {
                                                                 description: "You can proceed to checkout.",
                                                                 duration: 3000,
@@ -228,11 +325,11 @@ export default function ProductsBrowser({ initialProducts, totalCount, totalPage
                             {/* Pagination */}
                             {totalPages > 1 && (
                                 <div className="flex justify-center gap-2 mt-8">
-                                    <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage <= 1} className="w-10 h-10 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:border-primary hover:text-primary transition-colors font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed">&lt;</button>
+                                    <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage <= 1} className="w-10 h-10 cursor-pointer flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:border-primary hover:text-primary transition-colors font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed">&lt;</button>
                                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                                        <button key={page} onClick={() => handlePageChange(page)} className={`w-10 h-10 flex items-center justify-center rounded-lg font-bold text-sm transition-colors ${currentPage === page ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "border border-border text-muted-foreground hover:border-primary hover:text-primary"}`}>{page}</button>
+                                        <button key={page} onClick={() => handlePageChange(page)} className={`w-10 h-10 cursor-pointer flex items-center justify-center rounded-lg font-bold text-sm transition-colors ${currentPage === page ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "border border-border text-muted-foreground hover:border-primary hover:text-primary"}`}>{page}</button>
                                     ))}
-                                    <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage >= totalPages} className="w-10 h-10 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:border-primary hover:text-primary transition-colors font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed">&gt;</button>
+                                    <button onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage >= totalPages} className="w-10 h-10 cursor-pointer flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:border-primary hover:text-primary transition-colors font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed">&gt;</button>
                                 </div>
                             )}
                         </>
