@@ -18,7 +18,7 @@ import Footer from "@/components/layout/Footer";
 // UploadThing Hook
 import { useUploadThing } from "@/lib/uploadthing";
 
-// --- CUSTOM SELECT COMPONENT ---
+// --- CUSTOM SELECT COMPONENT (FIXED Z-INDEX) ---
 interface CustomSelectProps {
     label: string;
     options: string[];
@@ -42,7 +42,8 @@ function CustomSelect({ label, options, value, onChange }: CustomSelectProps) {
     }, []);
 
     return (
-        <div className="relative" ref={containerRef}>
+        // FIX 1: Dynamic Z-Index ensures open dropdown beats sibling elements
+        <div className={`relative ${isOpen ? "z-50" : "z-0"}`} ref={containerRef}>
             <label className="block text-xs font-bold uppercase text-muted-foreground mb-2">{label}</label>
 
             {/* Trigger Button */}
@@ -281,12 +282,12 @@ export default function ServicesPage() {
             {/* =========================================
                 3. HOW WE WORK SECTION
                ========================================= */}
-            <section className="py-28 relative z-10 overflow-hidden">
+            <section className="pt-8 pb-36 relative z-10 overflow-hidden">
                 {/* Subtle Background for this section */}
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent pointer-events-none" />
 
                 <div className="max-w-7xl mx-auto px-6 relative">
-                    <div className="text-center mb-20">
+                    <div className="text-center mb-10 lg:mb-16">
                         <motion.h2
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
@@ -306,7 +307,7 @@ export default function ServicesPage() {
                         </motion.p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 lg:gap-8 relative">
 
                         {/* Visual Connecting Line (Desktop Only) */}
                         <div className="hidden md:block absolute top-[55px] left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary/30 to-transparent -z-10" />
@@ -376,7 +377,7 @@ export default function ServicesPage() {
             {/* =========================================
                 4. START A PROJECT FORM
                ========================================= */}
-            <div className="flex-grow pt-24 pb-16 relative z-10" id="start-project">
+            <div className="flex-grow pb-16 relative z-10" id="start-project">
 
                 {/* Header Section */}
                 <div className="max-w-4xl mx-auto px-6 mb-12">
@@ -394,8 +395,8 @@ export default function ServicesPage() {
                 <div className="max-w-4xl mx-auto px-6 mb-20">
                     <form className="space-y-12" onSubmit={handleSubmit}>
 
-                        {/* SECTION 1: Project Type */}
-                        <section>
+                        {/* SECTION 1: Project Type - FIX 2: High Z-Index for stacking */}
+                        <section className="relative z-40">
                             <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-6">
                                 1. What do you need?
                             </h2>
@@ -491,8 +492,8 @@ export default function ServicesPage() {
                             </div>
                         </section>
 
-                        {/* SECTION 2: Budget & Scope */}
-                        <section>
+                        {/* SECTION 2: Budget & Scope - FIX 2: Mid Z-Index */}
+                        <section className="relative z-30">
                             <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-6 ">
                                 2. Budget & Scope
                             </h2>
@@ -538,8 +539,8 @@ export default function ServicesPage() {
                             </div>
                         </section>
 
-                        {/* SECTION 3: Project Details */}
-                        <section>
+                        {/* SECTION 3: Project Details - FIX 2: Lower Z-Index */}
+                        <section className="relative z-20">
                             <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-6">
                                 3. Project Details
                             </h2>
@@ -610,8 +611,8 @@ export default function ServicesPage() {
                             </div>
                         </section>
 
-                        {/* SECTION 4: Personal Information */}
-                        <section>
+                        {/* SECTION 4: Personal Information - FIX 2: Lowest Z-Index */}
+                        <section className="relative z-10">
                             <h2 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-6">
                                 4. Personal Information
                             </h2>
