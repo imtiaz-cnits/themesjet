@@ -63,10 +63,10 @@ export default function CartPage() {
                 <div className="max-w-7xl mx-auto px-6">
 
                     {/* Header */}
-                    <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
+                    <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
                         <div>
-                            <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-2">Shopping Cart</h1>
-                            <p className="text-muted-foreground">
+                            <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-2 text-center md:text-lefts">Shopping Cart</h1>
+                            <p className="text-muted-foreground text-center md:text-left">
                                 You have <span className="font-bold text-primary">{items.length} items</span> in your cart.
                             </p>
                         </div>
@@ -111,9 +111,10 @@ export default function CartPage() {
                                                     </span>
                                                     <span>Instant Download</span>
                                                 </div>
+                                                {/* FIX: Added mx-auto for mobile and sm:mx-0 for desktop to align properly */}
                                                 <button
                                                     onClick={() => removeFromCart(item.id)}
-                                                    className="text-xs font-bold cursor-pointer text-muted-foreground hover:text-red-500 flex items-center justify-center sm:justify-start gap-1 transition-colors"
+                                                    className="text-xs font-bold cursor-pointer text-muted-foreground hover:text-red-500 flex items-center justify-center sm:justify-start gap-1 transition-colors mx-auto sm:mx-0"
                                                 >
                                                     <Trash2 size={14} /> Remove Item
                                                 </button>

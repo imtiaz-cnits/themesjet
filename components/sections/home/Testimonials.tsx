@@ -30,7 +30,7 @@ export default function Testimonials({ reviews }: { reviews: ReviewProps[] }) {
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="text-primary font-bold tracking-widest uppercase text-xs mb-3 block font-heading"
+                        className="text-primary font-bold tracking-widest uppercase text-xs mb-3 block font-heading text-center md:text-left"
                     >
                         Community Trust
                     </motion.span>
@@ -39,7 +39,7 @@ export default function Testimonials({ reviews }: { reviews: ReviewProps[] }) {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
-                        className="text-4xl md:text-5xl font-heading font-extrabold text-foreground"
+                        className="text-4xl md:text-5xl font-heading font-extrabold text-foreground text-center md:text-left"
                     >
                         Loved by Developers
                     </motion.h2>

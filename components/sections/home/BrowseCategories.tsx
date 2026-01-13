@@ -54,13 +54,13 @@ export default function BrowseCategories() {
             <div className="max-w-7xl mx-auto px-6">
 
                 {/* Header */}
-                <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+                <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-12 gap-4">
                     <div>
                         <motion.span
                             initial={{ opacity: 0, y: 10 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            className="text-primary font-bold tracking-wider uppercase text-xs mb-2 block font-heading"
+                            className="text-primary font-bold tracking-wider uppercase text-xs mb-2 block font-heading text-center md:text-left"
                         >
                             Curated Collections
                         </motion.span>
@@ -118,7 +118,7 @@ export default function BrowseCategories() {
                             {/* Content */}
                             <div className={`relative h-full flex flex-col p-6 ${cat.id === 'html' ? 'justify-end p-8' : cat.id === 'react' ? 'justify-center items-start p-8' : 'justify-between'}`}>
 
-                                <div className={`flex items-center gap-3 ${cat.id === 'html' ? 'mb-4' : cat.id === 'react' ? 'mb-3' : ''}`}>
+                                <div className={`flex items-center gap-3 pb-2 ${cat.id === 'html' ? 'mb-4' : cat.id === 'react' ? 'mb-3' : ''}`}>
                                     <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl ${cat.bgColor} ${cat.color} flex items-center justify-center backdrop-blur-md border border-white/10`}>
                                         {cat.icon}
                                     </div>

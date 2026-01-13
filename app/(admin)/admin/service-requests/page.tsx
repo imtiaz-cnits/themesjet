@@ -41,8 +41,8 @@ export default async function ServiceRequestsPage() {
                             key={req.id}
                             className="bg-card border border-border rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"
                         >
-                            {/* INTERACTIVE STATUS BADGE */}
-                            <div className="absolute top-6 right-6 z-10">
+                            {/* INTERACTIVE STATUS BADGE - DESKTOP ONLY */}
+                            <div className="hidden lg:block absolute top-6 right-6 z-10">
                                 <StatusSelector id={req.id} currentStatus={req.status} />
                             </div>
 
@@ -74,6 +74,11 @@ export default async function ServiceRequestsPage() {
                                         </div>
                                     </div>
 
+                                    {/* STATUS BADGE - MOBILE ONLY (Placed here as requested) */}
+                                    <div className="lg:hidden mb-4 ">
+                                        <StatusSelector id={req.id} currentStatus={req.status} />
+                                    </div>
+
                                     {/* Description Box */}
                                     <div className="bg-secondary/30 rounded-xl border border-border/50 p-5 mb-4">
                                         <p className="text-sm text-foreground/80 whitespace-pre-wrap leading-relaxed">
@@ -95,7 +100,7 @@ export default async function ServiceRequestsPage() {
                                 </div>
 
                                 {/* RIGHT COLUMN: Client Info */}
-                                <div className="w-full lg:w-80 lg:border-l border-border lg:pl-8 flex flex-col gap-6">
+                                <div className="w-full lg:w-80 border-t lg:border-t-0 lg:border-l border-border pt-8 lg:pt-0 lg:pl-8 flex flex-col gap-6">
                                     <div>
                                         <h3 className="text-xs font-bold uppercase text-muted-foreground tracking-wider mb-4">
                                             Client Details

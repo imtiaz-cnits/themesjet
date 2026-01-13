@@ -14,7 +14,8 @@ import {
     LayoutDashboard,
     Settings,
     Download,
-    MessageSquare
+    MessageSquare,
+    ShieldCheck // Imported ShieldCheck for Admin Icon
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { motion, AnimatePresence } from "framer-motion";
@@ -190,29 +191,40 @@ export default function Navbar() {
                                                 </div>
 
                                                 <div className="py-2">
+                                                    {/* Admin Dashboard Link for Super Admins */}
+                                                    {session.user.role === "ADMIN" && (
+                                                        <Link
+                                                            href="/admin"
+                                                            onClick={() => setIsProfileMenuOpen(false)}
+                                                            className="flex items-center gap-3 px-4 py-2.5 text-sm font-bold text-primary hover:bg-primary/5 transition-colors"
+                                                        >
+                                                            <ShieldCheck size={16} /> Go to Admin Dashboard
+                                                        </Link>
+                                                    )}
+
                                                     <Link
-                                                        href="/user/dashboard?tab=overview" // FIX: Added query param
+                                                        href="/user/dashboard?tab=overview"
                                                         onClick={() => setIsProfileMenuOpen(false)}
                                                         className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors"
                                                     >
                                                         <LayoutDashboard size={16} className="text-muted-foreground" /> Overview
                                                     </Link>
                                                     <Link
-                                                        href="/user/dashboard?tab=downloads" // FIX: Added query param
+                                                        href="/user/dashboard?tab=downloads"
                                                         onClick={() => setIsProfileMenuOpen(false)}
                                                         className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors"
                                                     >
                                                         <Download size={16} className="text-muted-foreground" /> My Downloads
                                                     </Link>
                                                     <Link
-                                                        href="/user/dashboard?tab=reviews" // FIX: Added query param
+                                                        href="/user/dashboard?tab=reviews"
                                                         onClick={() => setIsProfileMenuOpen(false)}
                                                         className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors"
                                                     >
                                                         <MessageSquare size={16} className="text-muted-foreground" /> My Reviews
                                                     </Link>
                                                     <Link
-                                                        href="/user/dashboard?tab=settings" // FIX: Added query param
+                                                        href="/user/dashboard?tab=settings"
                                                         onClick={() => setIsProfileMenuOpen(false)}
                                                         className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-foreground hover:bg-muted transition-colors"
                                                     >
@@ -266,7 +278,7 @@ export default function Navbar() {
                         <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-primary/20 rounded-full blur-[100px] -z-10 opacity-20" />
                         <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-purple-500/20 rounded-full blur-[100px] -z-10 opacity-20" />
 
-                        <div className="flex flex-col gap-2 mt-8">
+                        <div className="flex flex-col mt-8">
                             {navLinks.map((link, index) => {
                                 const isActive = pathname === link.href;
                                 return (
@@ -280,7 +292,7 @@ export default function Navbar() {
                                             href={link.href}
                                             onClick={() => setIsMobileMenuOpen(false)}
                                             className={`
-                                                group flex items-center justify-between py-5 border-b border-border text-2xl font-bold font-heading transition-colors
+                                                group flex items-center justify-between py-5 border-b border-border text-lg font-bold font-heading transition-colors
                                                 ${isActive ? 'text-primary' : 'text-foreground hover:text-primary'}
                                             `}
                                         >
@@ -338,7 +350,7 @@ export default function Navbar() {
                             <Link
                                 href="/services"
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className="w-full flex items-center justify-center gap-2 py-4 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/30 font-heading text-lg"
+                                className="w-full flex items-center justify-center gap-2 py-4 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/30 font-heading text-md"
                             >
                                 Hire Us Today
                             </Link>

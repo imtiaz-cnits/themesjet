@@ -41,7 +41,7 @@ export default function EditReviewModal({ review }: EditReviewModalProps) {
             {/* Trigger Button */}
             <button
                 onClick={() => setIsOpen(true)}
-                className="p-2 hover:bg-secondary rounded-lg text-muted-foreground hover:text-blue-500 transition-colors"
+                className="p-2 hover:bg-secondary rounded-lg text-muted-foreground hover:text-blue-500 transition-colors cursor-pointer"
                 title="Edit Review"
             >
                 <Edit size={18} />

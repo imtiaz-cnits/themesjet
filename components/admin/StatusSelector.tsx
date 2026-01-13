@@ -44,7 +44,7 @@ export default function StatusSelector({ id, currentStatus }: StatusSelectorProp
     };
 
     return (
-        <div className={`relative flex items-center px-3 py-1.5 rounded-full border shadow-sm transition-all ${statusColor}`}>
+        <div className={`relative flex items-center px-3 py-1.5 rounded-full w-1/2 md:w-full border shadow-sm transition-all ${statusColor}`}>
             {loading ? (
                 <Loader2 size={12} className="animate-spin mr-2" />
             ) : null}

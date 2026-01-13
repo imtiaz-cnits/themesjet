@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Upload, ShoppingCart, Package, DollarSign, BookOpen, MessageSquare, User, LogOut, Menu, X } from "lucide-react";
+import { LayoutDashboard, Upload, ShoppingCart, Package, DollarSign, BookOpen, MessageSquare, User, LogOut, Menu, X, ClipboardList } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 const menuItems = [
@@ -13,9 +13,9 @@ const menuItems = [
     { name: "Orders", icon: ShoppingCart, href: "/admin/orders" },
     { name: "Revenue", icon: DollarSign, href: "/admin/revenue" },
     { name: "Reviews", icon: MessageSquare, href: "/admin/reviews" },
-    { name: "Users", icon: User, href: "/admin/users" },
     { name: "Insights", icon: BookOpen, href: "/admin/insights" },
-    { name: "Service Requests", icon: BookOpen, href: "/admin/service-requests" }
+    { name: "Service Requests", icon: ClipboardList, href: "/admin/service-requests" },
+    { name: "Users", icon: User, href: "/admin/users" }
 ];
 
 export default function AdminSidebar() {
@@ -87,7 +87,7 @@ export default function AdminSidebar() {
                 </div>
 
                 {/* Menu */}
-                <nav className="flex-1 px-4 py-8 space-y-2">
+                <nav className="flex-1 px-4 py-4 space-y-2">
                     {menuItems.map((item) => {
                         const isActive = pathname === item.href;
                         return (

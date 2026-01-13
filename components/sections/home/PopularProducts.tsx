@@ -32,13 +32,13 @@ export default function PopularProducts({ products }: { products: ProductProps[]
             <div className="max-w-7xl mx-auto px-6 relative z-10">
 
                 {/* Header */}
-                <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+                <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-12 gap-6">
                     <div>
                         <motion.h2
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
-                            className="text-4xl font-extrabold font-heading text-foreground mb-4"
+                            className="text-4xl font-extrabold font-heading text-foreground mb-4 text-center md:text-left"
                         >
                             Popular <span className="text-primary">Products</span>
                         </motion.h2>
@@ -47,7 +47,7 @@ export default function PopularProducts({ products }: { products: ProductProps[]
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: 0.1 }}
-                            className="text-muted-foreground font-body max-w-lg text-lg"
+                            className="text-muted-foreground font-body max-w-lg text-lg text-center md:text-left"
                         >
                             Explore our best-selling templates curated for high-performance.
                         </motion.p>
@@ -81,7 +81,7 @@ export default function PopularProducts({ products }: { products: ProductProps[]
                                     <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent z-10"></div>
                                     <div className="w-full h-full relative group-hover:scale-105 transition-transform duration-700">
                                         <Image
-                                            src={product.imageUrl || "/images/placeholder.jpg"} // Fallback image
+                                            src={product.imageUrl || "/images/placeholder.jpg"}
                                             alt={product.name}
                                             fill
                                             className="object-cover"
@@ -95,7 +95,7 @@ export default function PopularProducts({ products }: { products: ProductProps[]
                                     </div>
 
                                     {/* Actions Overlay */}
-                                    <div className="absolute inset-0 bg-background/80 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 backdrop-blur-sm">
+                                    <div className="absolute inset-0 bg-background/60 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 backdrop-blur-[2px]">
                                         <Link
                                             href={`/products/${product.id}`}
                                             className="px-4 py-2 bg-foreground text-background font-bold rounded-lg text-sm hover:bg-primary hover:text-white transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 flex items-center gap-2"

@@ -52,12 +52,12 @@ export default function ServiceSection() {
             <div className="max-w-7xl mx-auto px-6 relative z-10">
 
                 {/* Section Header */}
-                <div className="mb-16">
+                <div className="mb-12 md:md-16">
                     <motion.span
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="text-primary font-bold tracking-wider uppercase text-xs mb-2 block font-heading"
+                        className="text-primary font-bold tracking-wider uppercase text-xs mb-2 block font-heading text-center md:text-left"
                     >
                         Our Custom Services
                     </motion.span>
@@ -66,7 +66,7 @@ export default function ServiceSection() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
-                        className="font-heading font-bold text-4xl md:text-5xl text-foreground"
+                        className="font-heading font-bold text-4xl md:text-5xl text-foreground text-center md:text-left"
                     >
                         Services
                     </motion.h2>

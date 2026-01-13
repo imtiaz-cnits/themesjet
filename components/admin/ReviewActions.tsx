@@ -18,7 +18,7 @@ export function DeleteReviewButton({ id }: { id: string }) {
     };
 
     return (
-        <button onClick={handleDelete} disabled={loading} className="p-2 hover:bg-red-500/10 text-muted-foreground hover:text-red-500 rounded-lg transition-colors">
+        <button onClick={handleDelete} disabled={loading} className="p-2 hover:bg-red-500/10 cursor-pointer text-muted-foreground hover:text-red-500 rounded-lg transition-colors">
             {loading ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
         </button>
     );
@@ -39,7 +39,7 @@ export function ToggleFeatureButton({ id, isFeatured }: { id: string, isFeatured
         <button
             onClick={handleToggle}
             disabled={loading}
-            className={`p-2 rounded-lg transition-colors ${
+            className={`p-2 rounded-lg transition-colors cursor-pointer ${
                 isFeatured
                     ? "bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20"
                     : "hover:bg-secondary text-muted-foreground hover:text-yellow-500"
