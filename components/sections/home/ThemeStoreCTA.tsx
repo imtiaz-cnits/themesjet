@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function ThemeStoreCTA() {
     return (
         // SECTION: Uses semantic background
-        <section className="py-16 px-6 bg-background transition-colors duration-300">
+        <section className="md:py-16 py-12 px-6 bg-background transition-colors duration-300">
             <div className="max-w-7xl mx-auto">
 
                 <motion.div
@@ -49,7 +49,7 @@ export default function ThemeStoreCTA() {
                         </div>
 
                         {/* Title */}
-                        <h2 className="text-4xl md:text-6xl font-heading font-extrabold mb-6 tracking-tight text-foreground transition-colors">
+                        <h2 className="text-4xl md:text-5xl font-heading font-extrabold mb-6 tracking-tight text-foreground transition-colors">
                             # 1 Theme Store
                         </h2>
 

@@ -28,17 +28,17 @@ export default function PopularProducts({ products }: { products: ProductProps[]
     };
 
     return (
-        <section className="py-16 relative overflow-hidden">
+        <section className="md:pt-16 pt-12 pb-4 relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-6 relative z-10">
 
                 {/* Header */}
-                <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-12 gap-6">
+                <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-10 gap-6">
                     <div>
                         <motion.h2
                             initial={{ opacity: 0, x: -20 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
-                            className="text-4xl font-extrabold font-heading text-foreground mb-4 text-center md:text-left"
+                            className="md:text-4xl text-3xl font-extrabold font-heading text-foreground mb-4 text-center md:text-left"
                         >
                             Popular <span className="text-primary">Products</span>
                         </motion.h2>
@@ -95,10 +95,10 @@ export default function PopularProducts({ products }: { products: ProductProps[]
                                     </div>
 
                                     {/* Actions Overlay */}
-                                    <div className="absolute inset-0 bg-background/60 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 backdrop-blur-[2px]">
+                                    <div className="absolute inset-0 bg-background/60 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 backdrop-blur-[1px] ">
                                         <Link
                                             href={`/products/${product.id}`}
-                                            className="px-4 py-2 bg-foreground text-background font-bold rounded-lg text-sm hover:bg-primary hover:text-white transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 flex items-center gap-2"
+                                            className="px-4 py-2 bg-foreground text-background font-bold rounded-lg text-sm hover:bg-primary hover:text-white transition-all transform translate-y-4 group-hover:translate-y-0 duration-300 flex items-center gap-2"
                                         >
                                             <Eye size={16} /> View Details
                                         </Link>
@@ -121,7 +121,7 @@ export default function PopularProducts({ products }: { products: ProductProps[]
                                     {/* Footer Stats */}
                                     <div className="flex items-center justify-between pt-4 border-t border-border mt-auto">
                                         <div className="flex items-center gap-1 text-xs text-yellow-500 font-bold">
-                                            ★★★★★ <span className="text-muted-foreground ml-1 font-medium">(5.0)</span>
+                                            ★ ★ ★ ★ ★ <span className="text-muted-foreground ml-1 font-medium">(5.0)</span>
                                         </div>
                                         <div className="text-xs text-muted-foreground font-bold">
                                             {product._count?.orderItems || 0} Sales
@@ -137,7 +137,7 @@ export default function PopularProducts({ products }: { products: ProductProps[]
                     </div>
                 )}
 
-                <div className="mt-16 text-center">
+                <div className="md:mt-16 mt-12 text-center">
                     <Link href="/products" className="px-8 py-4 border border-border rounded-full text-foreground font-bold hover:bg-foreground hover:text-background transition-all font-heading text-sm">
                         View All Products
                     </Link>

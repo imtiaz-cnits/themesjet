@@ -28,11 +28,11 @@ export default function FreshFromLab({ products }: { products: ProductProps[] })
     };
 
     return (
-        <section className="py-16 relative transition-colors duration-300">
+        <section className="md:pt-16 pt-12 relative transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-6">
 
                 {/* Header */}
-                <div className="flex justify-between items-end mb-12">
+                <div className="flex justify-between items-end mb-10">
                     <motion.h2
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}
@@ -83,10 +83,10 @@ export default function FreshFromLab({ products }: { products: ProductProps[] })
                                     </div>
 
                                     {/* Hover Actions */}
-                                    <div className="absolute inset-0 bg-background/80 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 backdrop-blur-[2px]">
+                                    <div className="absolute inset-0 bg-background/60 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 backdrop-blur-[1px]">
                                         <Link
                                             href={`/products/${product.id}`}
-                                            className="px-4 py-2 bg-foreground text-background font-bold rounded-lg text-sm hover:bg-primary hover:text-white transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 flex items-center gap-2"
+                                            className="px-4 py-2 bg-foreground text-background font-bold rounded-lg text-sm hover:bg-primary hover:text-white transition-all transform translate-y-4 group-hover:translate-y-0 duration-300 flex items-center gap-2"
                                         >
                                             <Eye size={16} /> View Details
                                         </Link>
@@ -109,7 +109,7 @@ export default function FreshFromLab({ products }: { products: ProductProps[] })
                                     {/* Footer Stats */}
                                     <div className="flex items-center justify-between pt-4 border-t border-border mt-auto">
                                         <div className="flex items-center gap-1 text-xs text-yellow-500 font-bold">
-                                            ★★★★★ <span className="text-muted-foreground ml-1 font-medium">(New)</span>
+                                            ★ ★ ★ ★ ★ <span className="text-muted-foreground ml-1 font-medium">(New)</span>
                                         </div>
                                         <div className="text-xs text-muted-foreground font-bold">
                                             {product._count?.orderItems || 0} Sales
@@ -126,7 +126,7 @@ export default function FreshFromLab({ products }: { products: ProductProps[] })
                 )}
 
                 {/* Mobile View All Button */}
-                <div className="mt-16 text-center md:hidden">
+                <div className="md:mt-16 mt-12 text-center md:hidden">
                     <Link
                         href="/products"
                         className="inline-block px-8 py-4 border border-border rounded-full text-foreground font-bold hover:bg-foreground hover:text-background transition-all font-heading text-sm"

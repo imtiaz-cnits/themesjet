@@ -50,11 +50,11 @@ const categories = [
 
 export default function BrowseCategories() {
     return (
-        <section className="relative z-10 py-16">
+        <section className="relative z-10 md:pt-16 pt-12">
             <div className="max-w-7xl mx-auto px-6">
 
                 {/* Header */}
-                <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-12 gap-4">
+                <div className="flex flex-col md:flex-row justify-between items-center md:items-end mb-10 gap-4">
                     <div>
                         <motion.span
                             initial={{ opacity: 0, y: 10 }}

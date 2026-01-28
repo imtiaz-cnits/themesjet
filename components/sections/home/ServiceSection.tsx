@@ -10,7 +10,7 @@ const services = [
         title: "Custom Theme Build",
         description: "We translate your designs into pixel-perfect, high-performance themes that are easy to edit.",
         icon: <Monitor className="w-8 h-8 text-white relative z-10" />,
-        glowColor: "bg-[#15274E]", // Blue from your SVG
+        glowColor: "bg-[#15274E]" , // Blue from your SVG
         dotColor: "bg-blue-500",
         features: [
             "Pixel Perfect Design",
@@ -48,11 +48,11 @@ const services = [
 
 export default function ServiceSection() {
     return (
-        <section className="py-16 relative overflow-hidden">
+        <section className="md:pt-16 pt-12 relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-6 relative z-10">
 
                 {/* Section Header */}
-                <div className="mb-12 md:md-16">
+                <div className="mb-10">
                     <motion.span
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -66,7 +66,7 @@ export default function ServiceSection() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
-                        className="font-heading font-bold text-4xl md:text-5xl text-foreground text-center md:text-left"
+                        className="font-heading font-bold text-3xl md:text-4xl text-foreground text-center md:text-left"
                     >
                         Services
                     </motion.h2>
@@ -87,7 +87,7 @@ export default function ServiceSection() {
                             {/* Icon Box with Glow Effect */}
                             <div className="relative w-16 h-16 mb-8 flex items-center justify-center">
                                 {/* The Glow Background (Replicating your SVG filter) */}
-                                <div className={`absolute inset-0 rounded-xl blur-sm ${service.glowColor}`}></div>
+                                <div className={`absolute inset-0 rounded-xl dark:blur-sm ${service.glowColor}`}></div>
                                 {/* The Icon */}
                                 {service.icon}
                             </div>

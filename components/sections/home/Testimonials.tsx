@@ -21,11 +21,11 @@ export default function Testimonials({ reviews }: { reviews: ReviewProps[] }) {
     if (!reviews || reviews.length === 0) return null;
 
     return (
-        <section className="py-16 transition-colors duration-300 relative overflow-hidden">
+        <section className="md:pt-16 pt-12 transition-colors duration-300 relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-6 relative z-10">
 
                 {/* Header */}
-                <div className="mb-12">
+                <div className="mb-10">
                     <motion.span
                         initial={{ opacity: 0, y: 10 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -39,7 +39,7 @@ export default function Testimonials({ reviews }: { reviews: ReviewProps[] }) {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
-                        className="text-4xl md:text-5xl font-heading font-extrabold text-foreground text-center md:text-left"
+                        className="text-3xl md:text-4xl font-heading font-extrabold text-foreground text-center md:text-left"
                     >
                         Loved by Developers
                     </motion.h2>

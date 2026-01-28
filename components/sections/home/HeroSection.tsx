@@ -18,7 +18,7 @@ export default function HeroSection() {
     }, []);
 
     return (
-        <section className="relative pt-30 pb-16 lg:pt-52 lg:pb-40 overflow-visible">
+        <section className="relative pt-30 pb-10 lg:pt-52 lg:pb-40 overflow-visible">
 
             {/* GLOBAL BACKGROUND BLOBS */}
             <div className="fixed inset-0 z-0 pointer-events-none">
@@ -109,7 +109,7 @@ export default function HeroSection() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.5 }}
-                        className="mt-10 flex items-center gap-6 text-sm text-muted-foreground font-medium"
+                        className="md:mt-10 mt-6 flex items-center gap-6 text-sm text-muted-foreground font-medium"
                     >
                         <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-green-500" /> Verified Code</span>
                         <span className="flex items-center gap-2"><Zap className="w-4 h-4 text-green-500" /> Instant Download</span>

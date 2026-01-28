@@ -6,7 +6,7 @@ import { Plug, LayoutTemplate } from "lucide-react";
 export default function WordPressEcosystem() {
     return (
         // SECTION: Uses standard background variable
-        <section className="py-10 relative z-10 transition-colors duration-300">
+        <section className="md:pt-16 pt-12 relative z-10 transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-6">
 
                 {/* Main Card Container */}
@@ -60,7 +60,7 @@ export default function WordPressEcosystem() {
                         </span>
 
                         {/* HEADING: Semantic Text Color */}
-                        <h2 className="text-3xl md:text-5xl font-heading font-bold text-foreground mb-6 transition-colors duration-300">
+                        <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-6 transition-colors duration-300">
                             The WordPress Ecosystem
                         </h2>
 
@@ -89,7 +89,7 @@ export default function WordPressEcosystem() {
                                     <LayoutTemplate size={20} />
                                 </div>
                                 <div className="text-left">
-                                    <div className="text-sm font-bold text-foreground font-heading">Premium Themes</div>
+                                    <div className="text-sm font-bold text-white font-heading">Premium Themes</div>
                                     <div className="text-xs text-muted-foreground font-body">Coming Soon</div>
                                 </div>
                             </div>
@@ -107,7 +107,7 @@ export default function WordPressEcosystem() {
                                     <Plug size={20} />
                                 </div>
                                 <div className="text-left">
-                                    <div className="text-sm font-bold text-foreground font-heading">Utility Plugins</div>
+                                    <div className="text-sm font-bold text-white font-heading">Utility Plugins</div>
                                     <div className="text-xs text-muted-foreground font-body">Coming Soon</div>
                                 </div>
                             </div>

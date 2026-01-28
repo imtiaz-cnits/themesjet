@@ -6,10 +6,7 @@ import Link from "next/link";
 
 export default function Advantages() {
     return (
-        // SECTION CONTAINER
-        // Light: 'bg-background' matches global theme (seamless transition)
-        // Dark: Deep radial gradient
-        <section className="py-16 relative z-10 overflow-hidden transition-colors duration-300">
+        <section className="md:pt-16 pt-12 relative z-10 overflow-hidden transition-colors duration-300">
 
             <div className="max-w-7xl mx-auto px-6">
 
@@ -21,9 +18,8 @@ export default function Advantages() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         className="
-                            relative rounded-[32px] p-10 flex flex-col overflow-hidden isolate
-                            border border-gray-200 dark:border-white/30
-                            bg-white dark:bg-[radial-gradient(circle_at_top_left,#421b7b_0,#050014_55%,#050015_100%)]
+                            relative rounded-[32px] p-8 flex flex-col overflow-hidden isolate
+                           bg-white dark:bg-[radial-gradient(circle_at_top_left,#421b7b_0,#050014_55%,#050015_100%)]
                             group
                         "
                     >
@@ -34,7 +30,7 @@ export default function Advantages() {
                             <p className="text-[#2E215C] dark:text-[#8e92ff] uppercase tracking-[0.12em] text-xs font-bold mb-3 font-heading">
                                 Advantages
                             </p>
-                            <h2 className="text-[42px] leading-[1.05] font-extrabold text-gray-900 dark:text-white mb-4 font-heading">
+                            <h2 className="md:text-4xl text-3xl leading-[1.05] font-extrabold text-gray-900 dark:text-white mb-4 font-heading">
                                 What you will get from us?
                             </h2>
                             <p className="text-gray-600 dark:text-[#c0c4ff] text-[15px] leading-[1.6] max-w-[380px] font-body">
