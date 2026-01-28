@@ -27,7 +27,7 @@ export default function ThemeStoreCTA() {
                 >
                     {/* --- BACKGROUND GRADIENT (Dark Mode Only) --- */}
                     {/* Kept explicit colors for the artistic gradient blobs, only visible in dark mode */}
-                    <div className="absolute inset-0 z-0 hidden dark:block">
+                    <div className="absolute inset-0 z-0 block">
                         <div className="absolute top-0 left-[-10%] w-[60%] h-full bg-purple-700/40 blur-[120px] mix-blend-screen pointer-events-none"></div>
                         <div className="absolute bottom-0 right-[-10%] w-[60%] h-full bg-[#4D2FFF]/30 blur-[120px] mix-blend-screen pointer-events-none"></div>
                     </div>
