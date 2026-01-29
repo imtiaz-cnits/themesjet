@@ -129,7 +129,7 @@ export default async function ProductsPage(props: PageProps) {
                                 </p>
                             </div>
 
-                            <div className="w-full md:w-auto">
+                            <div className="w-full md:w-auto ">
                                 <CategoryTabs />
                             </div>
                         </div>

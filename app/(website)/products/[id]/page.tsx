@@ -76,14 +76,14 @@ export default async function ProductDetailsPage(props: PageProps) {
 
             {/* REVIEWS SECTION CONTAINER (Moved Back Here) */}
             <div className="bg-background border-t border-border">
-                <div className="max-w-7xl mx-auto px-6 py-20">
+                <div className="max-w-7xl mx-auto px-6 py-10 md:py-20">
                     <ProductReviews productId={product.id} />
                 </div>
             </div>
 
             {/* Related Products */}
             {relatedProducts.length > 0 && (
-                <section className="border-t border-border bg-secondary/30 py-16">
+                <section className="border-t border-border bg-secondary/30 py-12 md:py-16">
                     <div className="max-w-7xl mx-auto px-6">
                         <h2 className="text-2xl font-heading font-bold text-foreground mb-8">You might also like</h2>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

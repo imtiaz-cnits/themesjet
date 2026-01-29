@@ -80,7 +80,7 @@ export default function Navbar() {
     const isLightTransparent = mounted && theme === 'light' && !isScrolled && !isMobileMenuOpen;
     const navbarBgClass = isScrolled
         ? "fixed bg-background/80 backdrop-blur-xl border-border py-4 top-0"
-        : "absolute bg-transparent border-transparent py-6 top-0 lg:top-[40px]";
+        : "absolute bg-transparent border-transparent py-6 top-0 md:top-[40px]";
 
     if (!mounted) return null;
 
@@ -89,7 +89,7 @@ export default function Navbar() {
             <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
 
             <nav className={`w-full z-40 transition-all duration-300 border-b ${navbarBgClass}`}>
-                <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+                <div className="max-w-7xl mx-auto px-6 flex gap-10 justify-between items-center">
 
                     <Link href="/" className="flex items-center gap-3 group z-50 max-w-[200px]">
                         <svg className="h-8 w-auto" viewBox="0 0 3006 542" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -117,7 +117,7 @@ export default function Navbar() {
                         </svg>
                     </Link>
 
-                    <div className="hidden lg:flex items-center gap-10 text-base font-medium font-body transition-colors duration-300">
+                    <div className="hidden xl:flex items-center gap-10 text-base font-medium font-body transition-colors duration-300">
                         {navLinks.map((link) => {
                             const isActive = pathname === link.href;
                             const activeClass = "text-primary font-bold";
@@ -137,7 +137,7 @@ export default function Navbar() {
                     <div className="flex items-center gap-4 sm:gap-6 z-50">
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="lg:hidden p-2 mt-1 rounded-full transition-colors text-muted-foreground hover:text-foreground bg-accent/50"
+                            className="xl:hidden p-2 mt-1 rounded-full transition-colors text-muted-foreground hover:text-foreground bg-accent/50"
                         >
                             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
                         </button>
@@ -273,7 +273,7 @@ export default function Navbar() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className="fixed inset-0 z-30 bg-background/95 backdrop-blur-3xl pt-24 px-6 flex flex-col lg:hidden"
+                        className="fixed inset-0 z-30 bg-background/95 backdrop-blur-3xl pt-24 px-6 flex flex-col xl:hidden"
                     >
                         <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-primary/20 rounded-full blur-[100px] -z-10 opacity-20" />
                         <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-purple-500/20 rounded-full blur-[100px] -z-10 opacity-20" />

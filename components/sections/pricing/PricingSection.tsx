@@ -43,7 +43,7 @@ export default function PricingSection() {
 
                 {/* 1. HEADER */}
                 <div className="text-center max-w-8xl mx-auto mb-16">
-                    <section className="max-w-5xl mx-auto px-6 text-center mb-24">
+                    <section className="max-w-5xl mx-auto px-6 text-center mb-10 md:mb-20">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -89,7 +89,7 @@ export default function PricingSection() {
                 </div>
 
                 {/* 2. PRICING CARDS */}
-                <div className="grid lg:grid-cols-3 gap-8 mb-24">
+                <div className="grid lg:grid-cols-3 gap-12 lg:gap-8 mb-10 md:mb-20">
 
                     {/* TIER 1: STARTER */}
                     <motion.div
@@ -140,7 +140,7 @@ export default function PricingSection() {
                             <h3 className="text-lg font-bold text-primary mb-2 flex items-center gap-2">Growth Partner <Zap size={16} className="fill-current" /></h3>
                             <p className="text-sm text-muted-foreground mb-6">Full design & development power for scaling teams.</p>
                             <div className="flex items-baseline gap-1">
-                                <span className="text-5xl font-extrabold text-foreground">${pricing[billingCycle].growth}</span>
+                                <span className="md:text-4xl text-3xl font-extrabold text-foreground">${pricing[billingCycle].growth}</span>
                                 <span className="text-muted-foreground">/mo</span>
                             </div>
                         </div>
@@ -199,7 +199,7 @@ export default function PricingSection() {
                 </div>
 
                 {/* 3. ADD-ONS */}
-                <div className="max-w-4xl mx-auto mb-24">
+                <div className="max-w-4xl mx-auto mb-10 md:mb-20">
                     <h3 className="text-2xl font-heading font-bold text-foreground mb-8 text-center">Power-Up Add-ons</h3>
                     <div className="grid md:grid-cols-3 gap-6">
                         <div className="bg-secondary/20 border border-border p-6 rounded-2xl flex flex-col items-center text-center">

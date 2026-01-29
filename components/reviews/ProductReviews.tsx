@@ -31,7 +31,7 @@ export default async function ProductReviews({ productId }: { productId: string 
                 </div>
             </div>
 
-            <div className="grid lg:grid-cols-12 gap-12">
+            <div className="grid lg:grid-cols-12 gap-8 md:gap-12">
 
                 {/* Left Column: Form (Restored Here) */}
                 <div className="lg:col-span-4">

@@ -28,7 +28,7 @@ export default function CategoryTabs() {
     };
 
     return (
-        <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide align-middle items-center">
+        <div className="flex gap-2 overflow-auto md:overflow-hidden py-3 sm:py-4 sm:pl-4 pr-0 scrollbar-hide align-middle items-center">
             {categories.map((tab) => {
                 const isActive = tab === currentCategory;
 
@@ -39,7 +39,7 @@ export default function CategoryTabs() {
                         className={`
                             whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-bold transition-all border
                             ${isActive
-                            ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/25"
+                            ? "bg-primary text-primary-foreground border-primary shadow-md shadow-primary/25"
                             : "bg-card border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
                         }
                         `}

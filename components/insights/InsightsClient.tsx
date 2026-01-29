@@ -26,11 +26,11 @@ export default function InsightsClient({ initialPosts, totalPages, featuredPost 
     return (
         <div className="max-w-7xl mx-auto px-6">
             {/* Header */}
-            <div className="text-center max-w-3xl mx-auto mb-16">
+            <div className="text-center max-w-3xl mx-auto mb-10 md:mb-12">
                 <span className="inline-block px-3 py-1 bg-primary/10 border border-primary/20 text-primary rounded-full text-xs font-bold uppercase tracking-wider mb-6">
                     Insights & Resources
                 </span>
-                <h1 className="font-heading font-bold text-4xl md:text-5xl text-foreground mb-6">
+                <h1 className="font-heading font-bold text-4xl md:text-6xl text-foreground mb-6 leading-tight">
                     Stories for <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-500">Makers.</span>
                 </h1>
                 <p className="text-muted-foreground text-lg">
@@ -44,19 +44,19 @@ export default function InsightsClient({ initialPosts, totalPages, featuredPost 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="mb-16"
+                    className="mb-10 md:mb-16"
                 >
                     <Link href={`/insights/${featuredPost.slug}`} className="group relative block rounded-3xl overflow-hidden border border-border bg-card transition-all duration-500">
                         <div className="grid grid-cols-1 lg:grid-cols-2">
                             <div className="h-64 lg:h-auto bg-muted relative overflow-hidden">
                                 <div className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-700" style={{ backgroundImage: `url(${featuredPost.coverImage})` }} />
                             </div>
-                            <div className="p-8 lg:p-12 flex flex-col justify-center">
+                            <div className="p-6 lg:p-12 flex flex-col justify-center">
                                 <div className="flex items-center gap-3 mb-4">
                                     <span className="px-3 py-1 bg-primary text-primary-foreground text-xs font-bold rounded-lg">{featuredPost.category}</span>
                                     <span className="text-xs text-muted-foreground font-medium flex items-center gap-1"><Clock size={12} /> {featuredPost.readTime}</span>
                                 </div>
-                                <h2 className="text-2xl md:text-4xl font-heading font-bold text-foreground mb-4 group-hover:text-primary transition-colors">
+                                <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-4 group-hover:text-primary transition-colors">
                                     {featuredPost.title}
                                 </h2>
                                 <p className="text-muted-foreground mb-8 text-base md:text-lg leading-relaxed line-clamp-3">

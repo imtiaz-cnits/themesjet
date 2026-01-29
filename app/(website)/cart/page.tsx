@@ -76,7 +76,7 @@ export default function CartPage() {
                     </div>
 
                     {items.length > 0 ? (
-                        <div className="flex flex-col lg:flex-row gap-12">
+                        <div className="flex flex-col lg:flex-row gap-8 md:gap-12">
 
                             {/* LEFT: Cart Items List */}
                             <div className="flex-1 space-y-6">
@@ -156,9 +156,9 @@ export default function CartPage() {
                                     {/* UPDATED CHECKOUT BUTTON */}
                                     <button
                                         onClick={handleProceedToCheckout}
-                                        className="w-full py-4 bg-primary cursor-pointer text-primary-foreground font-bold rounded-xl shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all flex items-center justify-center gap-2 mb-4"
+                                        className="group w-full py-4 bg-primary cursor-pointer text-primary-foreground font-bold rounded-xl shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all flex items-center justify-center gap-2 mb-4"
                                     >
-                                        Proceed to Checkout <ArrowRight size={18} />
+                                        Proceed to Checkout <ArrowRight className="transition-transform duration-300 group-hover:translate-x-1" size={18} />
                                     </button>
 
                                     <div className="flex items-center justify-center gap-2 text-[10px] uppercase font-bold tracking-wider text-muted-foreground">
