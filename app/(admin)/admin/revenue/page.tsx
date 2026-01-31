@@ -28,9 +28,6 @@ async function getRevenueStats() {
     const availablePayout = Math.max(0, totalEarnings - pendingClearance);
 
     // 4. Chart Data (Last 12 Months Mock-up from real data)
-    // Note: Doing complex date grouping in Prisma is tricky without raw SQL.
-    // For this implementation, we will fetch the last 50 orders and group them in JS
-    // to populate the chart dynamically.
     const lastOrders = await prisma.order.findMany({
         where: { status: "COMPLETED" },
         orderBy: { createdAt: "asc" },
@@ -47,9 +44,8 @@ async function getRevenueStats() {
     });
 
     // Fill in chart bars (ensure we have data for the UI, or fallback to 0)
-    // We create a mock 12-bar array, filling in real data where available
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    const maxVal = Math.max(...Array.from(monthlyRevenue.values()), 100); // Avoid div by zero
+    const maxVal = Math.max(...Array.from(monthlyRevenue.values()), 100); 
 
     const chartData = monthNames.map(month => {
         const amount = monthlyRevenue.get(month) || 0;

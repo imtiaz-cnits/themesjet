@@ -60,9 +60,9 @@ export default async function AdminDashboard() {
         <div className="space-y-8">
 
             {/* Header - UPDATED RESPONSIVENESS */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 mb-8">
                 <div>
-                    <h1 className="text-3xl font-heading font-bold text-foreground">Dashboard</h1>
+                    <h1 className="text-3xl font-heading font-bold text-foreground mb-2">Dashboard</h1>
                     <p className="text-muted-foreground">Welcome back, Themes Jet Admin.</p>
                 </div>
                 <Link href="/admin/upload" className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-bold shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all flex items-center gap-2 w-full md:w-auto justify-center">

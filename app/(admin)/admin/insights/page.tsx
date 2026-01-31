@@ -31,7 +31,7 @@ export default async function AdminInsightsPage() {
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
                 <div>
-                    <h1 className="text-3xl font-heading font-bold text-foreground">Insights</h1>
+                    <h1 className="text-3xl font-heading font-bold text-foreground mb-2">Insights</h1>
                     <p className="text-muted-foreground">Manage your blog posts and tutorials.</p>
                 </div>
                 <Link href="/admin/insights/create" className="bg-primary text-primary-foreground px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-primary/90 transition-all flex items-center gap-2">

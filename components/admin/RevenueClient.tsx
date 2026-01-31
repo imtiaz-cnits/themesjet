@@ -22,7 +22,7 @@ export default function RevenueClient({ stats, chartData }: RevenueClientProps) 
 
             <div className="flex justify-between items-end">
                 <div>
-                    <h1 className="text-3xl font-heading font-bold text-foreground">Revenue</h1>
+                    <h1 className="text-3xl font-heading font-bold text-foreground mb-2">Revenue</h1>
                     <p className="text-muted-foreground">Track your earnings and payouts.</p>
                 </div>
                 <button className="px-4 py-2 border border-border rounded-lg text-sm font-bold text-foreground hover:bg-secondary transition-colors flex items-center gap-2">
@@ -57,7 +57,7 @@ export default function RevenueClient({ stats, chartData }: RevenueClientProps) 
                         className="bg-card border border-border p-6 rounded-2xl shadow-sm"
                     >
                         <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">{card.label}</p>
-                        <h3 className="text-3xl font-heading font-bold text-foreground mb-1">{card.amount}</h3>
+                        <h3 className="text-2xl md:text-3xl font-heading font-bold text-foreground mb-1">{card.amount}</h3>
                         <p className="text-xs text-green-500 font-bold">{card.sub}</p>
                     </motion.div>
                 ))}
@@ -77,7 +77,7 @@ export default function RevenueClient({ stats, chartData }: RevenueClientProps) 
                     {/* Chart Bars */}
                     <div className="flex-1 flex items-end justify-between gap-2 h-64 px-4 pb-4 border-b border-border/50">
                         {chartData.map((data, i) => (
-                            <div key={i} className="w-full bg-primary/5 rounded-t-lg relative group h-full flex flex-col justify-end">
+                            <div key={i} className="w-full bg-primary/5 rounded-t-lg relative group h-40 md:h-full flex flex-col justify-end">
                                 {/* Tooltip */}
                                 <div className="opacity-0 group-hover:opacity-100 absolute -top-10 left-1/2 -translate-x-1/2 bg-foreground text-background text-xs font-bold py-1 px-2 rounded transition-opacity whitespace-nowrap z-10">
                                     ${data.amount.toFixed(0)}

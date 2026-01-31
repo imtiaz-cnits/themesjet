@@ -91,8 +91,8 @@ export default function AdminOrdersClient({ initialOrders }: { initialOrders: Or
             </div>
 
             {/* Table */}
-            <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
-                <div className="overflow-x-auto">
+            <div className="bg-card border border-border rounded-2xl shadow-sm overflow-x-auto w-full">
+                <div className="overflow-x-auto w-full">
                     <table className="w-full text-sm text-left">
                         <thead className="bg-muted/50 border-b border-border text-muted-foreground uppercase text-xs font-bold">
                         <tr>
@@ -118,15 +118,15 @@ export default function AdminOrdersClient({ initialOrders }: { initialOrders: Or
                                                 {order.user.name?.charAt(0) || order.user.email.charAt(0)}
                                             </div>
                                             <div>
-                                                <div className="font-bold text-foreground">{order.user.name || "Guest"}</div>
-                                                <div className="text-xs text-muted-foreground">{order.user.email}</div>
+                                                <div className="font-bold text-foreground truncate max-w-[100px]">{order.user.name || "Guest"}</div>
+                                                <div className="text-xs text-muted-foreground truncate max-w-[100px]">{order.user.email}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex flex-col gap-1">
                                             {order.items.map((item, i) => (
-                                                <span key={i} className="text-xs font-medium text-foreground truncate max-w-[200px]" title={item.product.name}>
+                                                <span key={i} className="text-xs font-medium text-foreground truncate max-w-[100px]" title={item.product.name}>
                                                         • {item.product.name}
                                                     </span>
                                             ))}

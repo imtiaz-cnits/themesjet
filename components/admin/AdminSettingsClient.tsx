@@ -57,7 +57,7 @@ export default function AdminSettingsClient() {
     };
 
     return (
-        <div className="max-w-2xl mx-auto">
+        <div className="w-full">
             <div className="bg-card border border-border rounded-2xl p-8 shadow-sm">
                 <h2 className="text-2xl font-heading font-bold text-foreground mb-2">Admin Settings</h2>
                 <p className="text-muted-foreground mb-8">Manage your administrative profile and credentials.</p>

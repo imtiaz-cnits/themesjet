@@ -79,10 +79,10 @@ export default function AdminTopbar() {
     const unreadCount = notifications.filter(n => !n.read).length;
 
     return (
-        <header className="h-20 bg-card/50 backdrop-blur-xl border-b border-border sticky top-0 z-30 px-6 flex items-center justify-between">
+        <header className="h-20 bg-card/50 backdrop-blur-xl border-b border-border sticky top-0 left-0 z-30 px-6 flex items-center justify-between">
 
             <div className="flex items-center gap-4">
-                <h2 className="text-xl font-heading font-bold text-foreground hidden md:block">Dashboard</h2>
+                <h2 className="text-xl font-heading font-bold text-foreground hidden lg:block">Dashboard</h2>
             </div>
 
             <div className="flex items-center gap-6">
@@ -100,7 +100,7 @@ export default function AdminTopbar() {
                 <div className="relative" ref={notifRef}>
                     <button
                         onClick={() => setIsNotifOpen(!isNotifOpen)}
-                        className="relative p-2 cursor-pointer text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-secondary focus:outline-none"
+                        className="relative p-2 cursor-pointer text-muted-foreground rounded-full hover:text-primary transition-colors bg-secondary/50 focus:outline-none"
                     >
                         <Bell size={20} />
                         {unreadCount > 0 && !loading && (

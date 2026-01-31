@@ -17,7 +17,7 @@ export default async function EditPostPage(props: { params: Promise<{ id: string
     return (
         <div className="max-w-4xl mx-auto space-y-8">
             <div>
-                <h1 className="text-3xl font-heading font-bold text-foreground">Edit Insight</h1>
+                <h1 className="text-3xl font-heading font-bold text-foreground mb-2">Edit Insight</h1>
                 <p className="text-muted-foreground">Update your content and settings.</p>
             </div>
             <EditPostForm post={post} />

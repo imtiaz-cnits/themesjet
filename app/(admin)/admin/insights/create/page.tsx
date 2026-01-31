@@ -9,7 +9,7 @@ export default async function CreatePostPage() {
     return (
         <div className="max-w-4xl mx-auto space-y-8">
             <div>
-                <h1 className="text-3xl font-heading font-bold text-foreground">Write New Insight</h1>
+                <h1 className="text-3xl font-heading font-bold text-foreground mb-2">Write New Insight</h1>
                 <p className="text-muted-foreground">Share knowledge with your community.</p>
             </div>
             <CreatePostForm />

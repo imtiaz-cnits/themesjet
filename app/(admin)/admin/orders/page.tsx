@@ -41,7 +41,7 @@ export default async function AdminOrdersPage() {
     return (
         <div>
             <div className="mb-8">
-                <h1 className="text-3xl font-heading font-bold text-foreground">Order Management</h1>
+                <h1 className="text-3xl font-heading font-bold text-foreground mb-2">Order Management</h1>
                 <p className="text-muted-foreground">View and manage all customer transactions.</p>
             </div>
 

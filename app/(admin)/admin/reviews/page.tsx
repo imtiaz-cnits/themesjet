@@ -30,7 +30,7 @@ export default async function AdminReviewsPage() {
 
             <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden w-full max-w-[calc(100vw-32px)] md:max-w-full mx-auto">
                 <div className="overflow-x-auto w-full">
-                    <table className="w-full text-left text-sm whitespace-nowrap min-w-[1000px]">
+                    <table className="w-full text-left text-sm whitespace-nowrap min-w-[800px]">
                         <thead className="bg-secondary/50 border-b border-border text-muted-foreground uppercase text-xs font-bold tracking-wider">
                         <tr>
                             <th className="px-6 py-4">Customer</th>
@@ -83,7 +83,7 @@ export default async function AdminReviewsPage() {
 
                                     {/* Comment */}
                                     <td className="px-6 py-4">
-                                        <p className="text-muted-foreground truncate max-w-[250px]" title={review.comment}>
+                                        <p className="text-muted-foreground truncate max-w-[100px]" title={review.comment}>
                                             {review.comment}
                                         </p>
                                     </td>

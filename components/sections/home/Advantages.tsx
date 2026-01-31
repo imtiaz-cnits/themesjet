@@ -18,7 +18,7 @@ export default function Advantages() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         className="
-                            relative rounded-[32px] p-8 flex flex-col overflow-hidden isolate
+                            relative rounded-[32px] p-8 flex flex-col overflow-hidden isolate  border border-gray-200 dark:border-white/5
                            bg-white dark:bg-[radial-gradient(circle_at_top_left,#421b7b_0,#050014_55%,#050015_100%)]
                             group
                         "

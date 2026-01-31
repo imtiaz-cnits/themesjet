@@ -52,7 +52,7 @@ export default async function AdminProductsPage(props: {
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
                 <div>
-                    <h1 className="text-2xl sm:text-3xl font-heading font-bold text-foreground">Products</h1>
+                    <h1 className="text-2xl sm:text-3xl font-heading font-bold text-foreground mb-2">Products</h1>
                     <p className="text-sm text-muted-foreground">Manage your digital assets catalog.</p>
                 </div>
                 <Link
@@ -76,12 +76,10 @@ export default async function AdminProductsPage(props: {
             </div>
 
             {/* TABLE CONTAINER - FIXED SCROLLING */}
-            {/* max-w-[calc(100vw-48px)] ensures the card never exceeds screen width minus padding (mobile) */}
-            <div className="bg-card border border-border rounded-2xl shadow-sm overflow-hidden w-full max-w-[calc(100vw-32px)] md:max-w-full mx-auto">
+            <div className="bg-card border border-border rounded-2xl shadow-sm overflow-auto w-full ">
 
-                <div className="overflow-x-auto w-full">
-                    {/* min-w-[800px] forces the table to be wide, creating the scroll interaction INSIDE the div */}
-                    <table className="w-full text-left text-sm whitespace-nowrap min-w-[800px]">
+                <div className="overflow-x-auto w-full max-w-[calc(100vw-32px)] md:max-w-full">
+                    <table className="w-full text-left text-sm">
                         <thead className="bg-secondary/50 border-b border-border text-muted-foreground uppercase text-xs font-bold tracking-wider">
                         <tr>
                             <th className="px-6 py-4">Product</th>
